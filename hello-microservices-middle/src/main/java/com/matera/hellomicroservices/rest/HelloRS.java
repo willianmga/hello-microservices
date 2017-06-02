@@ -6,7 +6,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/")
+import matera.com.hellomicroservices.core.Person;
+
+@Path("/hello")
 public class HelloRS {
 	
 	public HelloRS() {
@@ -14,7 +16,6 @@ public class HelloRS {
 	}
 	
 	@GET
-	@Path("hello")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response helloWorld() {
 		
@@ -22,4 +23,18 @@ public class HelloRS {
 		
 	}
 
+	@GET
+	@Path("person")
+	@Produces({ 
+		MediaType.APPLICATION_XML, 
+		MediaType.APPLICATION_JSON 
+	})
+	public Response sayHelloToPerson() {
+		
+		Person person = new Person();
+		person.setFirstName("William");
+		
+		return Response.ok(person).build();
+	}
+	
 }
