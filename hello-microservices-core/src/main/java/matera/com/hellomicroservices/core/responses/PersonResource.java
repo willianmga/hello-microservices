@@ -21,6 +21,8 @@ public class PersonResource {
 	private String email;
 	@XmlElement(name = "nickName")
 	private String nickName;
+	@XmlElement(name = "address")
+	private AddressResource address;
 
 	public UUID getUuid() {
 		return uuid;
@@ -60,6 +62,14 @@ public class PersonResource {
 
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+
+	public AddressResource getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressResource address) {
+		this.address = address;
 	}
 
 	@Override

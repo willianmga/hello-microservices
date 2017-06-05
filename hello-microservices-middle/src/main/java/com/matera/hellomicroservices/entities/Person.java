@@ -12,6 +12,7 @@ public class Person implements Serializable {
 	private String lastName;
 	private String email;
 	private String nickName;
+	private Address address;
 	
 	public UUID getId() {
 		return id;
@@ -53,6 +54,14 @@ public class Person implements Serializable {
 		this.nickName = nickName;
 	}
 	
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -100,6 +109,6 @@ public class Person implements Serializable {
 		} else if (!nickName.equals(other.nickName))
 			return false;
 		return true;
-	}	
+	}
 	
 }
