@@ -4,11 +4,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.inject.Inject;
 import com.matera.hellomicroservices.converter.PersonConverter;
-import com.matera.hellomicroservices.entities.Address;
 import com.matera.hellomicroservices.entities.Person;
 import com.matera.hellomicroservices.store.PersonStore;
 
@@ -26,25 +23,23 @@ public class PersonService {
 	}
 	
 	public CreatePersonResponse insert(CreatePersonRequest request) {
+
+		Person person = PersonConverter.convertToPerson(request, UUID.randomUUID());
+
+		try {
+			
+			store.insert(person);
+
+			CreatePersonResponse response = PersonConverter.convertToResponse(person, "Success");
 		
-		Person person = PersonConverter.convertToPerson(request);
-		Address address = person.getAddress();
-		
-		checkArgument(StringUtils.isNotBlank(person.getFirstName()), "the first name must not be null");
-		checkArgument(StringUtils.isNotBlank(person.getLastName()), "the last name must not be null");
-		checkArgument(StringUtils.isNotBlank(person.getEmail()), "the email must not be null");
-		checkArgument(StringUtils.isNotBlank(person.getNickName()), "the nickname must not be null");
-		checkArgument(StringUtils.isNotBlank(address.getCity()), "the city must not be null");
-		checkArgument(StringUtils.isNotBlank(address.getState()), "the state must not be null");
-		checkArgument(StringUtils.isNotBlank(address.getCountry()), "the country must not be null");		
-		checkArgument(StringUtils.isNotBlank(address.getZipCode()), "the zip code must not be null");
-		
-		Person inserted = store.insert(person);
-		
-		CreatePersonResponse response = PersonConverter.convertToResponse(inserted);
-		response.setMessage("Success");		
-		
-		return response;
+			return response;
+			
+		} catch(Exception e) {
+			
+			throw new RuntimeException("Failed to insert person. \n\n"
+									 + "Reason: " + e.getMessage() +
+					  					"Try again.");
+		}
 		
 	}
 

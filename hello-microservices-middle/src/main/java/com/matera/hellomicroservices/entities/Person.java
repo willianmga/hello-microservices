@@ -1,65 +1,105 @@
 package com.matera.hellomicroservices.entities;
 
-import java.io.Serializable;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.UUID;
 
-public class Person implements Serializable {
+import org.apache.commons.lang.StringUtils;
+
+public class Person {
 	
-	private static final long serialVersionUID = -8811833799402002786L;
+	private final UUID id;
+	private final String firstName;
+	private final String lastName;
+	private final String email;
+	private final String nickName;
+	private final Address address;
 	
-	private UUID id;
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String nickName;
-	private Address address;
+	private Person(Builder builder) {
+		
+	    this.id = builder.id;
+	    this.firstName = builder.firstName;
+	    this.lastName = builder.lastName;
+		this.email = builder.email;
+		this.nickName = builder.nickName;
+		this.address = builder.address;
+		
+	}
+	
+	public static class Builder {
+		
+		private UUID id;
+		private String firstName;
+		private String lastName;
+		private String email;
+		private String nickName;
+		private Address address;
+		
+		public Person build() {
+			
+			checkArgument(id != null, "the id must not be null");
+			checkArgument(StringUtils.isNotBlank(firstName), "the first name must not be null");
+			checkArgument(StringUtils.isNotBlank(lastName), "the last name must not be null");
+			checkArgument(StringUtils.isNotBlank(email), "the email must not be null");
+			checkArgument(StringUtils.isNotBlank(nickName), "the nickname must not be null");
+			
+			return new Person(this);
+		}
+		
+		public Builder withUUID(UUID id) {
+			this.id = id;
+			return this;
+		}
+		
+		public Builder withFirstName(String firstName) {
+			this.firstName = firstName;
+			return this;
+		}
+		
+		public Builder withLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}			
+		
+		public Builder withEmail(String email) {
+			this.email = email;
+			return this;
+		}
+		
+		public Builder withNickName(String nickName) {
+			this.nickName = nickName;
+			return this;
+		}	
+		
+		public Builder withAddress(Address address) {
+			this.address = address;
+			return this;
+		}					
+		
+	}
 	
 	public UUID getId() {
 		return id;
 	}
-	
-	public void setId(UUID id) {
-		this.id = id;
-	}
-	
+
 	public String getFirstName() {
 		return firstName;
-	}
-	
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
 	}
 	
 	public String getLastName() {
 		return lastName;
 	}
 	
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	
 	public String getEmail() {
 		return email;
-	}
-	
-	public void setEmail(String email) {
-		this.email = email;
 	}
 	
 	public String getNickName() {
 		return nickName;
 	}
 	
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
-	
 	public Address getAddress() {
 		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
 	}
 
 	@Override

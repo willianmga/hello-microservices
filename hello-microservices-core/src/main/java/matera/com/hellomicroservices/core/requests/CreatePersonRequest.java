@@ -4,58 +4,124 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreatePersonRequest {
 
 	@XmlElement(name = "firstName")
-	private String firstName;
+	private final String firstName; 
+	
 	@XmlElement(name = "lastName")
-	private String lastName;
+	private final String lastName;
+	
 	@XmlElement(name = "email")
-	private String email;
+	private final String email;
+	
 	@XmlElement(name = "nickName")
-	private String nickName;
+	private final String nickName;
+	
 	@XmlElement(name = "city")
-	private String city;
+	private final String city;
+	
 	@XmlElement(name = "state")
-	private String state;
+	private final String state;
+	
 	@XmlElement(name = "country")
-	private String country;	
+	private final String country;
+	
 	@XmlElement(name = "zipCode")
-	private String zipCode;
+	private final String zipCode;
+	
+	
+	private CreatePersonRequest(Builder builder) {
+		
+		this.firstName = builder.firstName;
+		this.lastName = builder.lastName;
+		this.nickName = builder.nickName;
+		this.email = builder.email;
+		this.city = builder.city;
+		this.state = builder.state;
+		this.country = builder.country;
+		this.zipCode = builder.zipCode;
+		
+	}
+	
+	@XmlTransient
+	public static class Builder {
+
+		private String firstName;
+		private String lastName;
+		private String nickName;
+		private String email;
+		private String city;
+		private String state;
+		private String country;
+		private String zipCode;
+		
+		public CreatePersonRequest build() {
+			
+			return new CreatePersonRequest(this);
+			
+		}
+		
+		public Builder withFirstName(String firstName) {
+			this.firstName = firstName;
+			return this;
+		}
+		
+		public Builder withLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}			
+		
+		public Builder withEmail(String email) {
+			this.email = email;
+			return this;
+		}
+		
+		public Builder withNickName(String nickName) {
+			this.nickName = nickName;
+			return this;
+		}	
+		
+		public Builder withCity(String city) {
+			this.city = city;
+			return this;
+		}
+		
+		public Builder withState(String state) {
+			this.state = state;
+			return this;
+		}			
+		
+		public Builder withCountry(String country) {
+			this.country = country;
+			return this;
+		}		
+		
+		public Builder withZipCode(String zipCode) {
+			this.zipCode = zipCode;
+			return this;
+		}			
+		
+	}
 	
 	public String getCity() {
 		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
 	}
 
 	public String getState() {
 		return state;
 	}
 
-	public void setState(String state) {
-		this.state = state;
-	}
-
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
 	public String getZipCode() {
 		return zipCode;
-	}
-
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
 	}
 	
 	public String getFirstName() {
@@ -66,28 +132,12 @@ public class CreatePersonRequest {
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getNickName() {
 		return nickName;
-	}
-
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
 	}
 
 	@Override

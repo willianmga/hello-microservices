@@ -20,19 +20,5 @@ public class HelloRS {
 		return Response.ok("Hello World").build();
 		
 	}
-
-	/*@GET
-	@Path("person")
-	@Produces({ 
-		MediaType.APPLICATION_XML, 
-		MediaType.APPLICATION_JSON 
-	})
-	public Response sayHelloToPerson() {
-		
-		Person person = new Person();
-		person.setFirstName("William");
-		
-		return Response.ok(person).build();
-	} */
 	
 }

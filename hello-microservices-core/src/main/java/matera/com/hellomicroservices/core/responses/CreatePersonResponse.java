@@ -6,30 +6,53 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreatePersonResponse {
 
 	@XmlElement(name = "personID")
-	private UUID id;
+	private final UUID id;
+	
 	@XmlElement(name = "message")
-	private String message;
+	private final String message;
+	
+	private CreatePersonResponse(Builder builder) {
+		this.id = builder.id;
+		this.message = builder.message;
+	}
+	
+	@XmlTransient
+	public static class Builder {
+
+		public UUID id;
+		public String message;
+		
+		public CreatePersonResponse build() {
+			
+			return new CreatePersonResponse(this);
+			
+		}
+		
+		public Builder withID(UUID id) {
+			this.id = id;
+			return this;
+		}
+		
+		public Builder withMessage(String message) {
+			this.message = message;
+			return this;
+		}		
+		
+	}
 
 	public UUID getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
 	public String getMessage() {
 		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
 	}
 
 	@Override

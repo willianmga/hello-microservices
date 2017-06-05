@@ -1,5 +1,7 @@
 package com.matera.hellomicroservices.converter;
 
+import java.util.UUID;
+
 import com.matera.hellomicroservices.entities.Address;
 import com.matera.hellomicroservices.entities.Person;
 
@@ -14,58 +16,56 @@ public class PersonConverter {
 		
 	}
 	
-	public static Person convertToPerson(CreatePersonRequest request) {
+	public static Person convertToPerson(CreatePersonRequest request, UUID personID) {
 		
-		Address address = new Address();
-		address.setCity(request.getCity());
-		address.setCountry(request.getCountry());
-		address.setState(request.getState());
-		address.setZipCode(request.getZipCode());
+		Address address = new Address.Builder()
+					.withCity(request.getCity())
+					.withCountry(request.getCountry())
+					.withState(request.getState())
+					.withZipCode(request.getZipCode())
+					.build();
 		
-		Person person = new Person();
-		person.setFirstName(request.getFirstName());
-		person.setLastName(request.getLastName());
-		person.setEmail(request.getEmail());
-		person.setNickName(request.getNickName());
-		person.setAddress(address);
+		Person person = new Person.Builder()
+				.withUUID(personID)
+				.withFirstName(request.getFirstName())
+				.withLastName(request.getLastName())
+				.withEmail(request.getEmail())
+				.withNickName(request.getNickName())
+				.withAddress(address)
+				.build();
 		
 		return person;
 		
 	}
 
-	public static CreatePersonResponse convertToResponse(Person person) {
+	public static CreatePersonResponse convertToResponse(Person person, String message) {
 		
-		CreatePersonResponse response = new CreatePersonResponse();
-		response.setId(person.getId());
+		CreatePersonResponse response = new CreatePersonResponse.Builder()
+				.withID(person.getId())
+				.withMessage(message)
+				.build();
+
 		return response;
 		
 	}
 
 	public static PersonResource converToPersonResource(Person person) {
 		
-		AddressResource address = PersonConverter.convertToAddressResource(person.getAddress());
+		AddressResource address = AddressConverter.convertToAddressResource(person.getAddress());
 		
-		PersonResource resource = new PersonResource();
-		resource.setUuid(person.getId());
-		resource.setFirstName(person.getFirstName());
-		resource.setLastName(person.getLastName());
-		resource.setNickName(person.getNickName());
-		resource.setEmail(person.getEmail());
-		resource.setAddress(address);
-		return resource;
-		
-	}
-	
-	public static AddressResource convertToAddressResource(Address address) {
-		
-		AddressResource resource = new AddressResource();
-		resource.setCity(address.getCity());
-		resource.setCountry(address.getCountry());
-		resource.setState(address.getState());
-		resource.setZipCode(address.getZipCode());
+		PersonResource resource = new PersonResource.Builder()
+				.withUUID(person.getId())
+				.withFirstName(person.getFirstName())
+				.withLastName(person.getLastName())
+				.withEmail(person.getEmail())
+				.withNickName(person.getNickName())
+				.withAddress(address)
+				.build();
+
 		return resource;
 		
 	}
 
 }
+
 

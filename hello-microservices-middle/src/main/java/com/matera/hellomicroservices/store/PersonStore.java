@@ -6,8 +6,8 @@ import com.matera.hellomicroservices.entities.Person;
 
 public interface PersonStore {
 	
-	public Person getById(UUID id);
+	void insert(Person person);
 	
-	Person insert(Person person);
+	public Person getById(UUID id);
 
 }

@@ -4,50 +4,83 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AddressResource {
 	
 	@XmlElement(name = "city")
-	private String city;
+	private final String city;
+	
 	@XmlElement(name = "state")
-	private String state;
+	private final String state;
+	
 	@XmlElement(name = "country")
-	private String country;
+	private final String country;
+	
 	@XmlElement(name = "zipCode")
-	private String zipCode;
+	private final String zipCode;
+	
+	private AddressResource(Builder builder) {
+		
+		this.city = builder.city;
+		this.state = builder.state;
+		this.country = builder.country;
+		this.zipCode = builder.zipCode;
+		
+	}
+	
+	@XmlTransient
+	public static class Builder {
+
+		public String city;
+		public String state;
+		public String country;
+		public String zipCode;
+		
+		public AddressResource build() {
+			
+			return new AddressResource(this);
+			
+		}		
+		
+		public Builder withCity(String city) {
+			this.city = city;
+			return this;
+		}
+		
+		public Builder withState(String state) {
+			this.state = state;
+			return this;
+		}			
+		
+		public Builder withCountry(String country) {
+			this.country = country;
+			return this;
+		}		
+		
+		public Builder withZipCode(String zipCode) {
+			this.zipCode = zipCode;
+			return this;
+		}	
+		
+	}
 	
 	public String getCity() {
 		return city;
-	}
-	
-	public void setCity(String city) {
-		this.city = city;
 	}
 	
 	public String getState() {
 		return state;
 	}
 	
-	public void setState(String state) {
-		this.state = state;
-	}
-	
 	public String getCountry() {
 		return country;
 	}
 	
-	public void setCountry(String country) {
-		this.country = country;
-	}
-	
 	public String getZipCode() {
 		return zipCode;
-	}
-	
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
 	}
 	
 	@Override

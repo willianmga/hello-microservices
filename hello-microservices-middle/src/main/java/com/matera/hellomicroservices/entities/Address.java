@@ -1,53 +1,78 @@
 package com.matera.hellomicroservices.entities;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import org.apache.commons.lang.StringUtils;
+
 public class Address {
 	
-	private String city;
-	private String state;
-	private String country;
-	private String zipCode;
+	private final String city;
+	private final String state;
+	private final String country;
+	private final String zipCode;
 	
-	public Address() {
+	private Address(Builder builder) {
+		
+		this.city = builder.city;
+		this.state = builder.state;
+		this.country = builder.country;
+		this.zipCode = builder.zipCode;
 		
 	}	
-
-	public Address (String city, String state, String country, String zipCode) {
-		this.city = city;
-		this.state = state;
-		this.country = country;
-		this.zipCode = zipCode;
+	
+	public static class Builder {
+		
+		private String city;
+		private String state;
+		private String country;
+		private String zipCode;
+		
+		public Address build() {
+			
+			checkArgument(StringUtils.isNotBlank(city), "the city must not be null");
+			checkArgument(StringUtils.isNotBlank(state), "the state must not be null");
+			checkArgument(StringUtils.isNotBlank(country), "the country must not be null");
+			checkArgument(StringUtils.isNotBlank(zipCode), "the zipCode must not be null");
+			
+			return new Address(this);
+		}		
+		
+		public Builder withCity(String city) {
+			this.city = city;
+			return this;
+		}
+		
+		public Builder withState(String state) {
+			this.state = state;
+			return this;
+		}			
+		
+		public Builder withCountry(String country) {
+			this.country = country;
+			return this;
+		}		
+		
+		public Builder withZipCode(String zipCode) {
+			this.zipCode = zipCode;
+			return this;
+		}			
+		
 	}
 
 	public String getCity() {
 		return city;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
-	}
-
 	public String getState() {
 		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
 	}
 
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
 	public String getZipCode() {
 		return zipCode;
-	}
-
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
 	}
 
 	@Override

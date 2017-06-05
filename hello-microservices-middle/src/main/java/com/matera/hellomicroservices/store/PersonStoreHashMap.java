@@ -9,13 +9,9 @@ public class PersonStoreHashMap implements PersonStore {
 	
 	static HashMap<UUID, Person> fakeData = new HashMap<UUID, Person>();
 
-	public Person insert(Person person) {
-		
-		person.setId(UUID.randomUUID());
+	public void insert(Person person) {
 		
 		fakeData.put(person.getId(), person);
-		
-		return person;
 		
 	}
 
