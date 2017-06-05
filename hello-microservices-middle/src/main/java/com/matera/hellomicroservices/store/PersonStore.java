@@ -1,13 +1,13 @@
 package com.matera.hellomicroservices.store;
 
-import matera.com.hellomicroservices.core.domain.Person;
+import java.util.UUID;
+
+import com.matera.hellomicroservices.entities.Person;
 
 public interface PersonStore {
 	
-	public Long getLastID();
+	public Person getById(UUID id);
 	
-	public Person getById(Long id);
-	
-	void insert(Person person);
+	Person insert(Person person);
 
 }
