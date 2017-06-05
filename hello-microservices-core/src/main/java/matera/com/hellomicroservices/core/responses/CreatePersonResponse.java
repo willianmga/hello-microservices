@@ -1,5 +1,7 @@
 package matera.com.hellomicroservices.core.responses;
 
+import java.util.UUID;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,16 +11,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreatePersonResponse {
 
+	@XmlElement(name = "personID")
+	private UUID id;
 	@XmlElement(name = "message")
 	private String message;
-	@XmlElement(name = "personID")
-	private Long id;
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

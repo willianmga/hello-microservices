@@ -1,9 +1,13 @@
 package com.matera.hellomicroservices.rest;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -12,19 +16,17 @@ import com.google.inject.Inject;
 import com.matera.hellomicroservices.service.PersonService;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
-import matera.com.hellomicroservices.core.requests.FindPersonByUUIDRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
 import matera.com.hellomicroservices.core.responses.PersonResource;
 
 @Path("/persons")
 public class PersonRS {
 	
-	private PersonService service;
+	private final PersonService service;
 
 	@Inject
 	public PersonRS(PersonService service) {
 		this.service = service;
-		
 	}
 	
 	@POST
@@ -43,14 +45,19 @@ public class PersonRS {
 	}
 	
 	@GET
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findPersonByUUID(FindPersonByUUIDRequest request) {
-
-		PersonResource resource = service.findByUUID(request);
-		return Response.ok(resource).build();
+	public Response findAllPersons() {
 		
-	}	
+		return Response.ok(new ArrayList<PersonResource>()).build();
+	}
 	
+	@GET
+	@Path("/{userUUID}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findPersonByUUID(@PathParam("userUUID") String userUUID) {
+
+		PersonResource resource = service.findByUUID(UUID.fromString(userUUID));
+		return Response.ok(resource).build();
+	}	
 
 }

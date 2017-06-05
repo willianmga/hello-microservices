@@ -7,7 +7,7 @@ import com.matera.hellomicroservices.entities.Person;
 
 public class PersonStoreJPA implements PersonStore {
 	
-	static HashMap<UUID, Person> fakeData = new HashMap<>();
+	static HashMap<UUID, Person> fakeData = new HashMap<UUID, Person>();
 
 	public Person insert(Person person) {
 		

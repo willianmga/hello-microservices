@@ -9,8 +9,11 @@ public class Bootstrap extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		
-		return Guice.createInjector(new StoreModule(), new RestModule());
-		
+		return Guice.createInjector(
+				new RestModule(), 
+				new StoreModule(), 
+				new HelloMicroservicesMiddleModule()
+			); 
 	}
 
 }
