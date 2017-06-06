@@ -25,13 +25,17 @@ public class PersonStoreHashMap implements PersonStore {
 
 	public List<Person> findAllPeople() {
 		
-		List<Person> people = new ArrayList<Person>();
+		return new ArrayList<Person>(fakeData.values());
 		
-		for (UUID id : fakeData.keySet()) {
-			people.add(fakeData.get(id));
-		}
+		//return Arrays.asList(fakeData.values().toArray(new Person[fakeData.size()]));
 		
-		return people;
+//		List<Person> people = new ArrayList<Person>();
+//		
+//		for (UUID id : fakeData.keySet()) {
+//			people.add(fakeData.get(id));
+//		}
+//		
+//		return people; 
 
 	}
 
