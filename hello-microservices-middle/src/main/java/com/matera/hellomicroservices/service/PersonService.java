@@ -2,6 +2,7 @@ package com.matera.hellomicroservices.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.google.inject.Inject;
@@ -52,6 +53,16 @@ public class PersonService {
 		PersonResource resource = PersonConverter.converToPersonResource(found);
 		
 		return resource;
+		
+	}
+
+	public List<PersonResource> findAllPeople() {
+		
+		List<Person> people = store.findAllPeople();
+		
+		List<PersonResource> peopleResource = PersonConverter.convertToPersonResourceList(people);
+
+		return peopleResource;
 		
 	}
 }

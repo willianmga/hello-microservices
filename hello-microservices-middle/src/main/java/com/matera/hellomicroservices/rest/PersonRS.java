@@ -1,6 +1,6 @@
 package com.matera.hellomicroservices.rest;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -34,43 +34,40 @@ public class PersonRS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addPerson(CreatePersonRequest request) {
-		
-		try {
 
-			CreatePersonResponse response = service.insert(request);
-			
-			String location = "/persons/" + response.getId();
-			
-			return Response.ok(response).header("location", location).build();
+		CreatePersonResponse response = service.insert(request);
 		
-		} catch (RuntimeException e) {
-			
-			return Response.status(Status.INTERNAL_SERVER_ERROR)
-						.header("error-message", e.getMessage())
-					    .build();
-			
-		}
+		String location = "/persons/" + response.getId();
+		
+		return Response.ok(response).header("location", location).build();
 		
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAllPersons() {
+	public Response findAllPeople() {
 		
-		// to be implemented
+		List<PersonResource> people = service.findAllPeople();
 		
-		return Response.ok(new ArrayList<PersonResource>()).build();
+		if (people.isEmpty())
+			return Response.status(Status.NOT_FOUND).build();
+		else
+			return Response.ok(people).build();
+		
 	}
 	
 	@GET
 	@Path("/{userUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findPersonByUUID(@PathParam("userUUID") String userUUID) {
-
-		// to be adjusted
 		
 		PersonResource resource = service.findByUUID(UUID.fromString(userUUID));
-		return Response.ok(resource).build();
+		
+		if (resource == null || resource.getUuid() == null)
+			return Response.status(Status.NOT_FOUND).build();
+		else
+			return Response.ok(resource).build();
+				
 	}	
 
 }

@@ -11,29 +11,32 @@ import javax.xml.bind.annotation.XmlTransient;
 public class CreatePersonRequest {
 
 	@XmlElement(name = "firstName")
-	private final String firstName; 
+	private String firstName; 
 	
 	@XmlElement(name = "lastName")
-	private final String lastName;
+	private String lastName;
 	
 	@XmlElement(name = "email")
-	private final String email;
+	private String email;
 	
 	@XmlElement(name = "nickName")
-	private final String nickName;
+	private String nickName;
 	
 	@XmlElement(name = "city")
-	private final String city;
+	private String city;
 	
 	@XmlElement(name = "state")
-	private final String state;
+	private String state;
 	
 	@XmlElement(name = "country")
-	private final String country;
+	private String country;
 	
 	@XmlElement(name = "zipCode")
-	private final String zipCode;
+	private String zipCode;
 	
+	private CreatePersonRequest() {
+		super();
+	}
 	
 	private CreatePersonRequest(Builder builder) {
 		

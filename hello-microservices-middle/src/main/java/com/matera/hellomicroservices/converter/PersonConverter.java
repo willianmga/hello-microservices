@@ -1,5 +1,7 @@
 package com.matera.hellomicroservices.converter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.matera.hellomicroservices.entities.Address;
@@ -18,12 +20,7 @@ public class PersonConverter {
 	
 	public static Person convertToPerson(CreatePersonRequest request, UUID personID) {
 		
-		Address address = new Address.Builder()
-					.withCity(request.getCity())
-					.withCountry(request.getCountry())
-					.withState(request.getState())
-					.withZipCode(request.getZipCode())
-					.build();
+		Address address = AddressConverter.convertToAddress(request);
 		
 		Person person = new Person.Builder()
 				.withUUID(personID)
@@ -63,6 +60,18 @@ public class PersonConverter {
 				.build();
 
 		return resource;
+		
+	}
+
+	public static List<PersonResource> convertToPersonResourceList(List<Person> people) {
+		
+		List<PersonResource> peopleResource = new ArrayList<PersonResource>();
+		
+		for (Person person : people) {
+			peopleResource.add(PersonConverter.converToPersonResource(person));
+		}
+		
+		return peopleResource;
 		
 	}
 
