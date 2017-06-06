@@ -86,7 +86,135 @@
 			<artifactId>hystrix-core</artifactId>
 			<version>1.4.25</version>
 		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.0.3</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>integration-test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>tomcat-run</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+								<configuration>
+									<fork>true</fork>
+									<path>/crudmicroservicesmiddle</path>
+									<port>${tomcat.port}</port>
+									<update>true</update>
+									<systemProperties>
+										<archaius.deployment.environment>travis</archaius.deployment.environment>
+										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
+										<application.version>${project.version}</application.version>
+										<http.port>${tomcat.port}</http.port>
+									</systemProperties>
+									<useTestClasspath>true</useTestClasspath>
+								</configuration>
+							</execution>
+							<execution>
+								<id>tomcat-shutdown</id>
+								<goals>
+									<goal>shutdown</goal>
+								</goals>
+								<phase>post-integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.15</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>travis</id>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>travis</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>tomcat-run</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+								<configuration>
+									<fork>true</fork>
+									<path>/crudmicroservicesmiddle</path>
+									<port>${tomcat.port}</port>
+									<update>true</update>
+									<systemProperties>
+										<archaius.deployment.environment>travis</archaius.deployment.environment>
+										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
+										<application.version>${project.version}</application.version>
+										<http.port>${tomcat.port}</http.port>
+									</systemProperties>
+									<useTestClasspath>true</useTestClasspath>
+								</configuration>
+							</execution>
+							<execution>
+								<id>tomcat-shutdown</id>
+								<goals>
+									<goal>shutdown</goal>
+								</goals>
+								<phase>post-integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.15</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>	
 
 	<build>
 		<pluginManagement>
@@ -103,11 +231,28 @@
 							<http.port>${tomcat.port}</http.port>
 						</systemProperties>
 					</configuration>
+					<executions>
+						<execution>
+							<id>tomcat-run</id>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<phase>pre-integration-test</phase>
+						</execution>
+						<execution>
+							<id>tomcat-shutdown</id>
+							<goals>
+								<goal>shutdown</goal>
+							</goals>
+							<phase>post-integration-test</phase>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 
 		<finalName>hellomicroservicesmiddle</finalName>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -119,6 +264,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -132,11 +278,156 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.9.1</version>
-				<configuration>
+				<configuration>	<profiles>
+		<profile>
+			<id>integration-test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>cassandra-maven-plugin</artifactId>
+						<version>${cassandra.plugin.version}</version>
+						<configuration>
+							<cqlVersion>3.0.0</cqlVersion>
+							<startNativeTransport>true</startNativeTransport>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>start</goal>
+									<goal>cql-exec</goal>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>tomcat-run</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+								<configuration>
+									<fork>true</fork>
+									<path>/crudmicroservicesmiddle</path>
+									<port>${tomcat.port}</port>
+									<update>true</update>
+									<systemProperties>
+										<archaius.deployment.environment>travis</archaius.deployment.environment>
+										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
+										<application.version>${project.version}</application.version>
+										<http.port>${tomcat.port}</http.port>
+									</systemProperties>
+									<useTestClasspath>true</useTestClasspath>
+								</configuration>
+							</execution>
+							<execution>
+								<id>tomcat-shutdown</id>
+								<goals>
+									<goal>shutdown</goal>
+								</goals>
+								<phase>post-integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.15</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>travis</id>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>travis</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>tomcat-run</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+								<configuration>
+									<fork>true</fork>
+									<path>/crudmicroservicesmiddle</path>
+									<port>${tomcat.port}</port>
+									<update>true</update>
+									<systemProperties>
+										<archaius.deployment.environment>travis</archaius.deployment.environment>
+										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
+										<application.version>${project.version}</application.version>
+										<http.port>${tomcat.port}</http.port>
+									</systemProperties>
+									<useTestClasspath>true</useTestClasspath>
+								</configuration>
+							</execution>
+							<execution>
+								<id>tomcat-shutdown</id>
+								<goals>
+									<goal>shutdown</goal>
+								</goals>
+								<phase>post-integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.15</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>local-eureka</id>
+			<properties>
+				<environment>local-eureka</environment>
+			</properties>
+		</profile>
+	</profiles>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<executions>
@@ -148,6 +439,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>

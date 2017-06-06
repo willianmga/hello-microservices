@@ -1,0 +1,112 @@
+package com.matera.hellomicroservices.rest;
+
+import static com.jayway.restassured.RestAssured.given;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.jayway.restassured.RestAssured;
+
+import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
+import matera.com.hellomicroservices.core.responses.PeopleResource;
+
+public class PersonRSIT {
+	
+//	private static final String URL = "http://localhost:9292/";
+	private String insertedPersonLocation;
+	
+	@BeforeClass
+	public static void setup() {
+		
+		RestAssured.port = 9292;
+		RestAssured.basePath = "hellomicroservicesmiddle";
+		RestAssured.baseURI = "http://localhost";		
+		
+	}
+
+
+	
+	@Test
+	public void makeSureApiIsUp() {
+		
+		given().when().get("/persons").then().statusCode(404);
+		
+	}
+	
+	@Test
+	public void createPeople() {
+		
+		CreatePersonRequest person1 = new CreatePersonRequest.Builder()
+				.withFirstName("Willian")
+				.withLastName("Azevedo")
+				.withEmail("willian-mga@hotmail.com")
+				.withNickName("bili")
+				.withCity("Maringa")
+				.withState("Parana")
+				.withCountry("Brazil")
+				.withZipCode("87025640")
+				.build();
+		
+		given()
+			.accept("application/json")
+			.contentType("application/json")
+			.body(person1)
+				.when()
+					.post()
+				.then()
+					.statusCode(200);
+		
+		CreatePersonRequest person2 = new CreatePersonRequest.Builder()
+				.withFirstName("Camila")
+				.withLastName("Vargas")
+				.withEmail("willian-mga@hotmail.com")
+				.withNickName("bili")
+				.withCity("Maringa")
+				.withState("Parana")
+				.withCountry("Brazil")
+				.withZipCode("87025640")
+				.build();
+		
+		given()
+			.accept("application/json")
+			.contentType("application/json")
+			.body(person2)
+				.when()
+					.post()
+				.then()
+					.statusCode(200);	
+		
+	}
+	
+	@Test
+	public void retrieveAllPeople() {
+		
+		PeopleResource people =  given()
+									.when()
+										.get("/persons")
+										.as(PeopleResource.class);
+		
+		assertTrue(people.getPeopleResource().size() == 2);
+		
+	}
+	
+	@Test
+	public void retrievePersonById() {
+		
+		given().
+			when()
+				.get("/person/123")
+			.then()
+				.statusCode(404);
+		
+		given()
+			.when()
+				.get("person/" + insertedPersonLocation)
+			.then()
+//				.body("firstName", equalTo("Willian"))
+//				.body("email", equalTo("willian-mga@hotmail.com"))
+				.statusCode(200);
+		
+	}
+	
+}
