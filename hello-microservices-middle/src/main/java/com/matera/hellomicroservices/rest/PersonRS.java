@@ -1,6 +1,5 @@
 package com.matera.hellomicroservices.rest;
 
-import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -18,6 +17,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
+import matera.com.hellomicroservices.core.responses.PeopleResource;
 import matera.com.hellomicroservices.core.responses.PersonResource;
 
 @Path("/persons")
@@ -47,9 +47,9 @@ public class PersonRS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findAllPeople() {
 		
-		List<PersonResource> people = service.findAllPeople();
+		PeopleResource people = service.findAllPeople();
 		
-		if (people.isEmpty())
+		if (people.getPeopleResource().isEmpty())
 			return Response.status(Status.NOT_FOUND).build();
 		else
 			return Response.ok(people).build();
@@ -61,9 +61,15 @@ public class PersonRS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findPersonByUUID(@PathParam("userUUID") String userUUID) {
 		
-		PersonResource resource = service.findByUUID(UUID.fromString(userUUID));
+		PersonResource resource; 
 		
-		if (resource == null || resource.getUuid() == null)
+		try {
+			resource = service.findByUUID(UUID.fromString(userUUID));
+		} catch(IllegalArgumentException e) {
+			resource = null;
+		}
+		
+		if (resource == null)
 			return Response.status(Status.NOT_FOUND).build();
 		else
 			return Response.ok(resource).build();

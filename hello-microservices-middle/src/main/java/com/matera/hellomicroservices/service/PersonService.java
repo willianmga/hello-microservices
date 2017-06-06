@@ -12,6 +12,7 @@ import com.matera.hellomicroservices.store.PersonStore;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
+import matera.com.hellomicroservices.core.responses.PeopleResource;
 import matera.com.hellomicroservices.core.responses.PersonResource;
 
 public class PersonService {
@@ -50,17 +51,20 @@ public class PersonService {
 				 
 		Person found = store.getById(uuid);
 		
+		if (found == null)
+			throw new IllegalArgumentException();
+		
 		PersonResource resource = PersonConverter.converToPersonResource(found);
 		
 		return resource;
 		
 	}
 
-	public List<PersonResource> findAllPeople() {
+	public PeopleResource findAllPeople() {
 		
 		List<Person> people = store.findAllPeople();
 		
-		List<PersonResource> peopleResource = PersonConverter.convertToPersonResourceList(people);
+		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
 
 		return peopleResource;
 		

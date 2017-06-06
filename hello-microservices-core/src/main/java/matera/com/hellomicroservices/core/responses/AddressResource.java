@@ -11,16 +11,16 @@ import javax.xml.bind.annotation.XmlTransient;
 public class AddressResource {
 	
 	@XmlElement(name = "city")
-	private final String city;
+	private String city;
 	
 	@XmlElement(name = "state")
-	private final String state;
+	private String state;
 	
 	@XmlElement(name = "country")
-	private final String country;
+	private String country;
 	
 	@XmlElement(name = "zipCode")
-	private final String zipCode;
+	private String zipCode;
 	
 	private AddressResource(Builder builder) {
 		
@@ -30,6 +30,10 @@ public class AddressResource {
 		this.zipCode = builder.zipCode;
 		
 	}
+	
+	private AddressResource() {
+		super();
+	}	
 	
 	@XmlTransient
 	public static class Builder {

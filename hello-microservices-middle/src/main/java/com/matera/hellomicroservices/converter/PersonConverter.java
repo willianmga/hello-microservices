@@ -10,6 +10,7 @@ import com.matera.hellomicroservices.entities.Person;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.AddressResource;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
+import matera.com.hellomicroservices.core.responses.PeopleResource;
 import matera.com.hellomicroservices.core.responses.PersonResource;
 
 public class PersonConverter {
@@ -63,7 +64,7 @@ public class PersonConverter {
 		
 	}
 
-	public static List<PersonResource> convertToPersonResourceList(List<Person> people) {
+	public static PeopleResource convertToPeopleResource(List<Person> people) {
 		
 		List<PersonResource> peopleResource = new ArrayList<PersonResource>();
 		
@@ -71,8 +72,11 @@ public class PersonConverter {
 			peopleResource.add(PersonConverter.converToPersonResource(person));
 		}
 		
-		return peopleResource;
-		
+		PeopleResource response = new PeopleResource.Builder()
+				.withPeople(peopleResource)
+				.build();
+
+		return response;
 	}
 
 }

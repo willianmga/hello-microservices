@@ -13,22 +13,22 @@ import javax.xml.bind.annotation.XmlTransient;
 public class PersonResource {
 
 	@XmlElement(name = "uuid")
-	private final UUID uuid;
+	private UUID uuid;
 	
 	@XmlElement(name = "firstName")
-	private final String firstName;
+	private String firstName;
 	
 	@XmlElement(name = "lastName")
-	private final String lastName;
+	private String lastName;
 	
 	@XmlElement(name = "email")
-	private final String email;
+	private String email;
 	
 	@XmlElement(name = "nickName")
-	private final String nickName;
+	private String nickName;
 	
 	@XmlElement(name = "address")
-	private final AddressResource address;
+	private AddressResource address;
 	
 	private PersonResource(Builder builder) {
 		this.uuid = builder.id;
@@ -38,6 +38,10 @@ public class PersonResource {
 		this.nickName = builder.nickName;
 		this.address = builder.address;
 	}
+
+	private PersonResource() {
+		super();
+	}	
 	
 	@XmlTransient
 	public static class Builder {

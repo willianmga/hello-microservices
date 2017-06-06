@@ -13,15 +13,19 @@ import javax.xml.bind.annotation.XmlTransient;
 public class CreatePersonResponse {
 
 	@XmlElement(name = "personID")
-	private final UUID id;
+	private UUID id;
 	
 	@XmlElement(name = "message")
-	private final String message;
+	private String message;
 	
 	private CreatePersonResponse(Builder builder) {
 		this.id = builder.id;
 		this.message = builder.message;
 	}
+	
+	private CreatePersonResponse() {
+		super();
+	}	
 	
 	@XmlTransient
 	public static class Builder {
