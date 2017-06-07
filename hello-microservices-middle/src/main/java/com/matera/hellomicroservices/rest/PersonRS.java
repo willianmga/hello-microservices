@@ -49,10 +49,11 @@ public class PersonRS {
 		
 		PeopleResource people = service.findAllPeople();
 		
-		if (people.getPeopleResource().isEmpty())
-			return Response.status(Status.NOT_FOUND).build();
-		else
-			return Response.ok(people).build();
+		Response response = (people.getPeopleResource().isEmpty()) ? 
+								Response.status(Status.NOT_FOUND).build() : 
+									Response.ok(people).build();  
+		
+		return response;
 		
 	}
 	
@@ -69,10 +70,11 @@ public class PersonRS {
 			resource = null;
 		}
 		
-		if (resource == null)
-			return Response.status(Status.NOT_FOUND).build();
-		else
-			return Response.ok(resource).build();
+		Response response = (resource != null) ? 
+								Response.ok(resource).build() : 
+									Response.status(Status.NOT_FOUND).build();
+		
+		return response;
 				
 	}	
 

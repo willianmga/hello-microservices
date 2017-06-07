@@ -2,6 +2,7 @@ package com.matera.hellomicroservices.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -11,8 +12,7 @@ import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.PeopleResource;
 
 public class PersonRSIT {
-	
-//	private static final String URL = "http://localhost:9292/";
+
 	private String insertedPersonLocation;
 	
 	@BeforeClass
@@ -24,8 +24,6 @@ public class PersonRSIT {
 		
 	}
 
-
-	
 	@Test
 	public void makeSureApiIsUp() {
 		
@@ -34,7 +32,7 @@ public class PersonRSIT {
 	}
 	
 	@Test
-	public void createPeople() {
+	public void createPeopleOk() {
 		
 		CreatePersonRequest person1 = new CreatePersonRequest.Builder()
 				.withFirstName("Willian")
@@ -79,7 +77,7 @@ public class PersonRSIT {
 	}
 	
 	@Test
-	public void retrieveAllPeople() {
+	public void retrieveAllPeopleOk() {
 		
 		PeopleResource people =  given()
 									.when()
@@ -91,21 +89,25 @@ public class PersonRSIT {
 	}
 	
 	@Test
-	public void retrievePersonById() {
+	public void retrievePersonByValidId() {
+
+		given()
+			.when()
+				.get(insertedPersonLocation)
+			.then()
+//				.body("firstName", equalTo("Willian"))
+//				.body("email", equalTo("willian-mga@hotmail.com"))
+				.statusCode(200);
+		
+	}
+	
+	public void retrievePersonByInvalidId() {
 		
 		given().
 			when()
 				.get("/person/123")
 			.then()
 				.statusCode(404);
-		
-		given()
-			.when()
-				.get("person/" + insertedPersonLocation)
-			.then()
-//				.body("firstName", equalTo("Willian"))
-//				.body("email", equalTo("willian-mga@hotmail.com"))
-				.statusCode(200);
 		
 	}
 	
