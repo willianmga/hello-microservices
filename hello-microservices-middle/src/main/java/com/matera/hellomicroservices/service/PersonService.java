@@ -44,6 +44,16 @@ public class PersonService {
 		}
 		
 	}
+	
+	public PeopleResource findAllPeople() {
+		
+		List<Person> people = store.findAllPeople();
+		
+		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
+
+		return peopleResource;
+		
+	}	
 
 	public PersonResource findByUUID(UUID uuid) {
 
@@ -60,12 +70,24 @@ public class PersonService {
 		
 	}
 
-	public PeopleResource findAllPeople() {
+	public PeopleResource findPeopleByZipCode(String zipCode) {
 		
-		List<Person> people = store.findAllPeople();
+		checkArgument(zipCode != null, "the zip code must not be null");
+		
+		List<Person> people = store.findByZipCode(zipCode);
 		
 		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
+		
+		return peopleResource;
+		
+	}
 
+	public PeopleResource findByFirstAndOrLastName(String firstName, String lastName) {
+		
+		List<Person> people = store.findByFirstAndOrLastName(firstName, lastName);
+		
+		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
+		
 		return peopleResource;
 		
 	}

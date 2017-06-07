@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -58,6 +59,22 @@ public class PersonRS {
 	}
 	
 	@GET
+	@Path("/query")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByFirstAndOrLastName(
+					@QueryParam("firstName") String firstName,
+					@QueryParam("lastName") String lastName) {
+
+		PeopleResource people = service.findByFirstAndOrLastName(firstName, lastName);
+		
+		Response response = (people.getPeopleResource().isEmpty()) ? 
+				Response.status(Status.NOT_FOUND).build() : 
+					Response.ok(people).build();		
+		
+		return response;
+	}
+	
+	@GET
 	@Path("/{userUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findPersonByUUID(@PathParam("userUUID") String userUUID) {
@@ -77,5 +94,20 @@ public class PersonRS {
 		return response;
 				
 	}	
+	
+	@GET
+	@Path("/{zipCode: [0-9]+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findPeopleByZipCode(@PathParam("zipCode") String zipCode) {
+		
+		PeopleResource people = service.findPeopleByZipCode(zipCode);
+		
+		Response response = (people == null) ?
+								Response.status(Status.NOT_FOUND).build() :
+									Response.ok(people).build();
+					
+		return response;
+		
+	}
 
 }

@@ -80,10 +80,7 @@ public class PersonRSIT {
 				.get(insertedPersonLocation)
 			.then()
 				.statusCode(200)	
-				.contentType(ContentType.JSON)
-//				.body("firstName", equalTo("Willian"))
-//				.body("email", equalTo("willian-mga@hotmail.com"));
-				;
+				.contentType(ContentType.JSON);
 		
 	}
 	
