@@ -115,72 +115,10 @@
 								<phase>pre-integration-test</phase>
 								<configuration>
 									<fork>true</fork>
-									<path>/crudmicroservicesmiddle</path>
+									<path>/hellomicroservicesmiddle</path>
 									<port>${tomcat.port}</port>
 									<update>true</update>
 									<systemProperties>
-										<archaius.deployment.environment>travis</archaius.deployment.environment>
-										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
-										<application.version>${project.version}</application.version>
-										<http.port>${tomcat.port}</http.port>
-									</systemProperties>
-									<useTestClasspath>true</useTestClasspath>
-								</configuration>
-							</execution>
-							<execution>
-								<id>tomcat-shutdown</id>
-								<goals>
-									<goal>shutdown</goal>
-								</goals>
-								<phase>post-integration-test</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.15</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>integration-test</goal>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>travis</id>
-			<activation>
-				<property>
-					<name>environment</name>
-					<value>travis</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.tomcat.maven</groupId>
-						<artifactId>tomcat7-maven-plugin</artifactId>
-						<version>2.2</version>
-						<executions>
-							<execution>
-								<id>tomcat-run</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<phase>pre-integration-test</phase>
-								<configuration>
-									<fork>true</fork>
-									<path>/crudmicroservicesmiddle</path>
-									<port>${tomcat.port}</port>
-									<update>true</update>
-									<systemProperties>
-										<archaius.deployment.environment>travis</archaius.deployment.environment>
 										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
 										<application.version>${project.version}</application.version>
 										<http.port>${tomcat.port}</http.port>

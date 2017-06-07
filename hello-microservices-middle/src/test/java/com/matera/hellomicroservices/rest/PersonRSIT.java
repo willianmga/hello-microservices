@@ -19,8 +19,8 @@ public class PersonRSIT {
 	public static void setup() {
 		
 		RestAssured.port = 9292;
-		RestAssured.basePath = "hellomicroservicesmiddle";
-		RestAssured.baseURI = "http://localhost";		
+		RestAssured.basePath = "/hellomicroservicesmiddle/";
+		RestAssured.baseURI = "http://localhost";
 		
 	}
 
@@ -45,14 +45,20 @@ public class PersonRSIT {
 				.withZipCode("87025640")
 				.build();
 		
-		given()
-			.accept("application/json")
-			.contentType("application/json")
-			.body(person1)
-				.when()
-					.post()
-				.then()
-					.statusCode(200);
+		System.out.println("Vou extrair o id");
+		
+		insertedPersonLocation = given()
+									.accept("application/json")
+									.contentType("application/json")
+									.body(person1)
+										.when()
+											.post("/persons")
+										.then()
+											.statusCode(200)
+//											.body("location", != null)
+											.extract().path("location");
+		
+		System.out.println("ID da pessoa criada AGORA: " + insertedPersonLocation);
 		
 		CreatePersonRequest person2 = new CreatePersonRequest.Builder()
 				.withFirstName("Camila")
@@ -70,7 +76,7 @@ public class PersonRSIT {
 			.contentType("application/json")
 			.body(person2)
 				.when()
-					.post()
+					.post("/persons")
 				.then()
 					.statusCode(200);	
 		
@@ -91,6 +97,8 @@ public class PersonRSIT {
 	@Test
 	public void retrievePersonByValidId() {
 
+		System.out.println("ID da pessoa criada: " + insertedPersonLocation);
+		
 		given()
 			.when()
 				.get(insertedPersonLocation)
@@ -101,6 +109,7 @@ public class PersonRSIT {
 		
 	}
 	
+	@Test
 	public void retrievePersonByInvalidId() {
 		
 		given().
