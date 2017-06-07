@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.google.inject.Inject;
 import com.matera.hellomicroservices.converter.PersonConverter;
 import com.matera.hellomicroservices.entities.Person;
+import com.matera.hellomicroservices.queries.PersonFilter;
 import com.matera.hellomicroservices.store.PersonStore;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
@@ -45,9 +46,12 @@ public class PersonService {
 		
 	}
 	
-	public PeopleResource findAllPeople() {
+	public PeopleResource findAllPeople(PersonFilter filter) {
 		
 		List<Person> people = store.findAllPeople();
+		people
+			.stream()
+			.filter(filter);
 		
 		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
 
@@ -82,13 +86,4 @@ public class PersonService {
 		
 	}
 
-	public PeopleResource findByFirstAndOrLastName(String firstName, String lastName) {
-		
-		List<Person> people = store.findByFirstAndOrLastName(firstName, lastName);
-		
-		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
-		
-		return peopleResource;
-		
-	}
 }
