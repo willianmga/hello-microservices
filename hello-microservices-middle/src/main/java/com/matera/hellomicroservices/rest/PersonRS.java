@@ -62,17 +62,17 @@ public class PersonRS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findPersonByUUID(@PathParam("userUUID") String userUUID) {
 		
-		PersonResource resource; 
+		PersonResource person; 
 		
 		try {
-			resource = service.findByUUID(UUID.fromString(userUUID));
+			person = service.findByUUID(UUID.fromString(userUUID));
 		} catch(IllegalArgumentException e) {
-			resource = null;
+			person = null;
 		}
 		
-		Response response = (resource != null) ? 
-								Response.ok(resource).build() : 
-									Response.status(Status.NOT_FOUND).build();
+		Response response = (person == null) ?
+								Response.status(Status.NOT_FOUND).build() :
+									Response.ok(person).build();
 		
 		return response;
 				

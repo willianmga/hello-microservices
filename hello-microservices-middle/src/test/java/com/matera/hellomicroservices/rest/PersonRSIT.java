@@ -2,18 +2,18 @@ package com.matera.hellomicroservices.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
-import matera.com.hellomicroservices.core.responses.PeopleResource;
 
 public class PersonRSIT {
 
-	private String insertedPersonLocation;
+	private static String insertedPersonLocation;
 	
 	@BeforeClass
 	public static void setup() {
@@ -24,14 +24,7 @@ public class PersonRSIT {
 		
 	}
 
-	@Test
-	public void makeSureApiIsUp() {
-		
-		given().when().get("/persons").then().statusCode(404);
-		
-	}
-	
-	@Test
+	@Before
 	public void createPeopleOk() {
 		
 		CreatePersonRequest person1 = new CreatePersonRequest.Builder()
@@ -45,20 +38,16 @@ public class PersonRSIT {
 				.withZipCode("87025640")
 				.build();
 		
-		System.out.println("Vou extrair o id");
-		
 		insertedPersonLocation = given()
-									.accept("application/json")
-									.contentType("application/json")
+									.accept(ContentType.JSON)
+									.contentType(ContentType.JSON)
 									.body(person1)
-										.when()
-											.post("/persons")
-										.then()
-											.statusCode(200)
-//											.body("location", != null)
-											.extract().path("location");
-		
-		System.out.println("ID da pessoa criada AGORA: " + insertedPersonLocation);
+								.when()
+									.post("/persons")
+								.then()
+									.statusCode(200)
+									.contentType(ContentType.JSON)
+									.extract().header("location");
 		
 		CreatePersonRequest person2 = new CreatePersonRequest.Builder()
 				.withFirstName("Camila")
@@ -72,40 +61,29 @@ public class PersonRSIT {
 				.build();
 		
 		given()
-			.accept("application/json")
-			.contentType("application/json")
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
 			.body(person2)
-				.when()
-					.post("/persons")
-				.then()
-					.statusCode(200);	
-		
-	}
-	
-	@Test
-	public void retrieveAllPeopleOk() {
-		
-		PeopleResource people =  given()
-									.when()
-										.get("/persons")
-										.as(PeopleResource.class);
-		
-		assertTrue(people.getPeopleResource().size() == 2);
+		.when()
+			.post("/persons")
+		.then()
+			.statusCode(200)
+			.contentType(ContentType.JSON);	
 		
 	}
 	
 	@Test
 	public void retrievePersonByValidId() {
-
-		System.out.println("ID da pessoa criada: " + insertedPersonLocation);
-		
+	
 		given()
 			.when()
 				.get(insertedPersonLocation)
 			.then()
+				.statusCode(200)	
+				.contentType(ContentType.JSON)
 //				.body("firstName", equalTo("Willian"))
-//				.body("email", equalTo("willian-mga@hotmail.com"))
-				.statusCode(200);
+//				.body("email", equalTo("willian-mga@hotmail.com"));
+				;
 		
 	}
 	
