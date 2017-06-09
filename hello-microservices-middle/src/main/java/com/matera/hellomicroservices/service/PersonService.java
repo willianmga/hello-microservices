@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 import com.matera.hellomicroservices.converter.PersonConverter;
@@ -48,10 +49,11 @@ public class PersonService {
 	
 	public PeopleResource findAllPeople(PersonFilter filter) {
 		
-		List<Person> people = store.findAllPeople();
-		people
-			.stream()
-			.filter(filter);
+		List<Person> people = 
+			store.findAllPeople()
+				.stream()
+				.filter(filter)
+				.collect(Collectors.toList());
 		
 		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
 

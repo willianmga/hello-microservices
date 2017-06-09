@@ -52,13 +52,13 @@ public class PersonRS {
 			@QueryParam("lastName") String lastName,
 			@QueryParam("zipCode") String zipCode) {
 
-		PersonFilter query = new PersonFilter.Builder()
+		PersonFilter filter = new PersonFilter.Builder()
 				.withFirstName(firstName)
 				.withLastName(lastName)
 				.withZipCode(zipCode)
 				.build();
 		
-		final PeopleResource people = service.findAllPeople(query);
+		final PeopleResource people = service.findAllPeople(filter);
 		
 		Response response = (people.getPeopleResource().isEmpty()) ? 
 								Response.status(Status.NOT_FOUND).build() : 

@@ -45,7 +45,7 @@ public class PersonFilter implements Predicate<Person> {
 		
 		public PersonFilter build() {
 			
-			Predicate<Person> byFirstName = person -> (firstName != null) ? Objects.equals(firstName, person.getFirstName()) : true; 
+			Predicate<Person> byFirstName = (person) -> (firstName != null) ? Objects.equals(firstName, person.getFirstName()) : true; 
 			
 			Predicate<Person> byLastName = (person) -> (lastName != null) ? Objects.equals(lastName, person.getLastName()) : true;
 			

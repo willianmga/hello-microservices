@@ -15,7 +15,7 @@ import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 
 public class PersonRSIT {
 
-	@BeforeClass
+	//@BeforeClass
 	public static void setup() {
 		
 		RestAssured.port = 9292;
@@ -23,7 +23,7 @@ public class PersonRSIT {
 		
 	}
 
-	@Test
+	//@Test
 	public void createPeopleOk() {
 		
 		CreatePersonRequest person = new CreatePersonRequest.Builder()
@@ -50,7 +50,7 @@ public class PersonRSIT {
 		
 	}
 	
-	@Test
+	//@Test
 	public void findPersonByID() {
 		
 		CreatePersonRequest paulo = new CreatePersonRequest.Builder()
@@ -76,7 +76,7 @@ public class PersonRSIT {
 		
 	}
 	
-	@Test
+	//@Test
 	public void retrievePersonByInvalidId() {
 		
 		given().
