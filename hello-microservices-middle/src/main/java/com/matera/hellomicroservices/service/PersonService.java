@@ -4,10 +4,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 import com.matera.hellomicroservices.converter.PersonConverter;
 import com.matera.hellomicroservices.entities.Person;
+import com.matera.hellomicroservices.queries.PersonFilter;
 import com.matera.hellomicroservices.store.PersonStore;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
@@ -44,6 +46,20 @@ public class PersonService {
 		}
 		
 	}
+	
+	public PeopleResource findAllPeople(PersonFilter filter) {
+		
+		List<Person> people = 
+			store.findAllPeople()
+				.stream()
+				.filter(filter)
+				.collect(Collectors.toList());
+		
+		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
+
+		return peopleResource;
+		
+	}	
 
 	public PersonResource findByUUID(UUID uuid) {
 
@@ -60,13 +76,16 @@ public class PersonService {
 		
 	}
 
-	public PeopleResource findAllPeople() {
+	public PeopleResource findPeopleByZipCode(String zipCode) {
 		
-		List<Person> people = store.findAllPeople();
+		checkArgument(zipCode != null, "the zip code must not be null");
+		
+		List<Person> people = store.findByZipCode(zipCode);
 		
 		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
-
+		
 		return peopleResource;
 		
 	}
+
 }

@@ -13,4 +13,8 @@ public interface PersonStore {
 
 	List<Person> findAllPeople();
 
+	List<Person> findByZipCode(String zipCode);
+
+	List<Person> findByFirstAndOrLastName(String firstName, String lastName);
+
 }
