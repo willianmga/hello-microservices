@@ -10,6 +10,7 @@
 	<properties>
 		<jackson.version>2.8.8</jackson.version>
 		<guice.version>4.0</guice.version>
+		<http.components.version>4.5.2</http.components.version>
 	</properties>  
   
   <dependencies>
@@ -47,6 +48,11 @@
 		<groupId>com.fasterxml.jackson.jaxrs</groupId>
 		<artifactId>jackson-jaxrs-json-provider</artifactId>
 		<version>${jackson.version}</version>
+	</dependency>	
+	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+	    <version>${http.components.version}</version>
 	</dependency>	
   </dependencies>
   
