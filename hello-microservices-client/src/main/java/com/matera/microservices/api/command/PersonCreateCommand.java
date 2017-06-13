@@ -1,42 +1,49 @@
 package com.matera.microservices.api.command;
 
+import java.io.InputStream;
 import java.net.URI;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.net.HttpHeaders;
 import com.matera.microservices.config.HelloMicroservicesGroupKey;
-import com.netflix.client.http.HttpRequest;
-import com.netflix.client.http.HttpRequest.Verb;
-import com.netflix.client.http.HttpResponse;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.niws.client.http.RestClient;
-	   
+
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
 
-@SuppressWarnings("deprecation")
 public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 
-	private static final HystrixCommand.Setter SETTER = Setter.withGroupKey(HelloMicroservicesGroupKey.MIDDLE)
-			.andCommandKey(HystrixCommandKey.Factory.asKey(PersonCreateCommand.class.getSimpleName()));
+	private static final HystrixCommand.Setter SETTER;
 	
-	private static final String DEFAULT_URL = "hellomicroservicesmiddle/persons";
-	private static final String URL = "crudmicroservices.persons.create.url";
+	private static final String HELLO_MIDDLE_HOST;	
 	
-	private final RestClient client;
+	private final HttpClient clientProvider;
 	private final ObjectMapper mapper;
-	private final CreatePersonRequest createRequest;
-
-	public PersonCreateCommand(final RestClient client, final ObjectMapper mapper, final CreatePersonRequest request) {
+	private final CreatePersonRequest createRequest;	
+	
+	static {
+		
+		DynamicPropertyFactory config = DynamicPropertyFactory.getInstance();
+		HELLO_MIDDLE_HOST = config.getStringProperty("hellomicroservices.middle.host", "http://localhost:9080/persons").get();
+		
+		SETTER = Setter.withGroupKey(HelloMicroservicesGroupKey.MIDDLE)
+				.andCommandKey(HystrixCommandKey.Factory.asKey(PersonCreateCommand.class.getSimpleName()));		
+		
+	}
+	
+	public PersonCreateCommand(HttpClient clientProvider, final ObjectMapper mapper, final CreatePersonRequest request) {
 		
 		super(SETTER);
 		
-		this.client = client;
+		this.clientProvider = clientProvider;
 		this.mapper = mapper;
 		this.createRequest = request;
 		
@@ -45,21 +52,22 @@ public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 	@Override
 	protected CreatePersonResponse run() throws Exception {
 		
-		String personCreateURL = DynamicPropertyFactory.getInstance().getStringProperty(URL, DEFAULT_URL).get();
+		URI uri = UriBuilder.fromPath(HELLO_MIDDLE_HOST).build();
 		
-		URI uri = UriBuilder.fromPath(personCreateURL).build();
+		HttpPost request = new HttpPost(uri);
+		request.setHeader("Content-Type", "application/json");
+		request.setHeader("Accept", "application/json");
+		request.setEntity(new StringEntity(mapper.writeValueAsString(createRequest)));
 		
-		HttpRequest request = HttpRequest.newBuilder()
-						.verb(Verb.POST)
-							.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-								.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-									.uri(uri)
-										.entity(createRequest)
-											.build();
-		try (HttpResponse response = client.executeWithLoadBalancer(request)) {
-			return mapper.readValue(response.getInputStream(), CreatePersonResponse.class);
+		HttpResponse response = clientProvider.execute(request);
+		
+		if (response.getStatusLine().getStatusCode() == 200) {
+			try (InputStream is = response.getEntity().getContent()) {
+				return mapper.readValue(is, CreatePersonResponse.class);
+			}
 		}
 		
+		return null;
 	}
 
 }
