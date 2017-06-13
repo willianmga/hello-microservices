@@ -31,8 +31,8 @@ public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 	
 	static {
 		
-		DynamicPropertyFactory config = DynamicPropertyFactory.getInstance();
-		HELLO_MIDDLE_HOST = config.getStringProperty("hellomicroservices.middle.host", "http://localhost:9080/hellomicroservicesmiddle/persons").get();
+		DynamicPropertyFactory config = DynamicPropertyFactory.getInstance();                                  
+		HELLO_MIDDLE_HOST = config.getStringProperty("hellomicroservices.middle.host", "http://hellomicroservicesmiddle:8080/hellomicroservicesmiddle/persons").get();
 		
 		SETTER = Setter.withGroupKey(HelloMicroservicesGroupKey.MIDDLE)
 				.andCommandKey(HystrixCommandKey.Factory.asKey(PersonCreateCommand.class.getSimpleName()));		
