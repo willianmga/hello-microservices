@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matera.microservices.config.HelloMicroservicesGroupKey;
 import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandKey;
 
@@ -23,7 +24,7 @@ public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 
 	private static final HystrixCommand.Setter SETTER;
 	
-	private static final String HELLO_MIDDLE_HOST;	
+	private static final DynamicStringProperty HELLO_MIDDLE_HOST;	
 	
 	private final HttpClient clientProvider;
 	private final ObjectMapper mapper;
@@ -32,7 +33,7 @@ public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 	static {
 		
 		DynamicPropertyFactory config = DynamicPropertyFactory.getInstance();                                  
-		HELLO_MIDDLE_HOST = config.getStringProperty("hellomicroservices.middle.host", "http://hellomicroservicesmiddle:8080/hellomicroservicesmiddle/persons").get();
+		HELLO_MIDDLE_HOST = config.getStringProperty("hellomicroservices.middle.host", "http://hellomicroservicesmiddle:8080/hellomicroservicesmiddle/persons");
 		
 		SETTER = Setter.withGroupKey(HelloMicroservicesGroupKey.MIDDLE)
 				.andCommandKey(HystrixCommandKey.Factory.asKey(PersonCreateCommand.class.getSimpleName()));		
@@ -52,7 +53,7 @@ public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 	@Override
 	protected CreatePersonResponse run() throws Exception {
 		
-		URI uri = UriBuilder.fromPath(HELLO_MIDDLE_HOST).build();
+		URI uri = UriBuilder.fromPath(HELLO_MIDDLE_HOST.get()).build();
 		
 		HttpPost request = new HttpPost(uri);
 		request.setHeader("Content-Type", "application/json");

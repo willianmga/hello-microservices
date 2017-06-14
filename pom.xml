@@ -67,4 +67,12 @@
 		</plugins>
 	</build>  
   
+  	<scm>
+  		<url>https://github.com/willianmga/hello-microservices.git</url>
+  		<developerConnection>Willian Azevedo</developerConnection>
+  	</scm>
+  	<issueManagement>
+  		<system>Github issues tracker</system>
+  		<url>https://github.com/willianmga/hello-microservices/issues</url>
+  	</issueManagement>
 </project>
