@@ -1,4 +1,4 @@
-package com.matera.microservices.queries;
+package com.matera.hellomicroservices.queries;
 
 public class PersonQuery {
 

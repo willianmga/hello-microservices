@@ -2,7 +2,7 @@ package com.matera.microservices.api;
 
 import java.util.UUID;
 
-import com.matera.microservices.queries.PersonQuery;
+import com.matera.hellomicroservices.queries.PersonQuery;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
