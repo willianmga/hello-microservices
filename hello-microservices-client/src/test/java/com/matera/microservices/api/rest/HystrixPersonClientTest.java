@@ -25,8 +25,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
-import com.matera.microservices.queries.PersonQuery;
 
 import matera.com.hellomicroservices.core.config.HelloMicroservicesHttpClientProvider;
 import matera.com.hellomicroservices.core.config.HelloMicroservicesObjectMapperProvider;
@@ -129,7 +129,7 @@ public class HystrixPersonClientTest {
 	}
 	
 	/**
-	 * Tests if {@link HystrixPersonClient#searchBy(com.matera.microservices.queries.PersonQuery)} will return
+	 * Tests if {@link HystrixPersonClient#searchBy(com.matera.hellomicroservices.queries.PersonQuery)} will return
 	 * the matching people
 	 * 
 	 * @throws Exception

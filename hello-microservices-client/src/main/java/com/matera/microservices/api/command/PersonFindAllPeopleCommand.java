@@ -11,8 +11,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.config.HelloMicroservicesGroupKey;
-import com.matera.microservices.queries.PersonQuery;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.netflix.hystrix.HystrixCommand;

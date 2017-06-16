@@ -6,11 +6,11 @@ import org.apache.http.client.HttpClient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
 import com.matera.microservices.api.command.PersonCreateCommand;
 import com.matera.microservices.api.command.PersonFindAllPeopleCommand;
 import com.matera.microservices.api.command.PersonFindByIdCommand;
-import com.matera.microservices.queries.PersonQuery;
 
 import matera.com.hellomicroservices.core.config.HelloMicroservices;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
