@@ -2,8 +2,11 @@ package com.matera.microservices.api;
 
 import java.util.UUID;
 
+import com.matera.microservices.queries.PersonQuery;
+
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
+import matera.com.hellomicroservices.core.responses.PeopleResource;
 import matera.com.hellomicroservices.core.responses.PersonResource;
 import rx.Observable;
 
@@ -32,7 +35,16 @@ public interface PersonClient {
 	 * @return {@link Observable<PersonResource}
 	 * 
 	 */
-	public Observable<PersonResource> findPersonByUUID(UUID id);
+	public Observable<PersonResource> searchPersonByUUID(UUID id);
+	
+	
+	/**
+	 * Find people by their attributes
+	 * 
+	 * @param personQuery
+	 * @return {@link Observable<PersonResource}
+	 */
+	public Observable<PeopleResource> searchBy(PersonQuery personQuery);
 	
 
 }

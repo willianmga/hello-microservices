@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.http.HttpResponse;
@@ -20,15 +22,18 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matera.microservices.api.PersonClient;
+import com.matera.microservices.queries.PersonQuery;
 
+import matera.com.hellomicroservices.core.config.HelloMicroservicesHttpClientProvider;
+import matera.com.hellomicroservices.core.config.HelloMicroservicesObjectMapperProvider;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.AddressResource;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
+import matera.com.hellomicroservices.core.responses.PeopleResource;
 import matera.com.hellomicroservices.core.responses.PersonResource;
 import rx.Observable;
 
@@ -38,13 +43,22 @@ public class HystrixPersonClientTest {
 	@Mock
 	private HttpClient httpClient;
 	
-	@Spy
+	//@Spy
 	private ObjectMapper mapper = new ObjectMapper();
 	
 	@InjectMocks
 	private HystrixPersonClient hystrixClient;
 	
 	private UUID uuid = UUID.randomUUID();
+	
+	public HystrixPersonClientTest() {
+		
+		mapper = new HelloMicroservicesObjectMapperProvider().get();
+		httpClient = new HelloMicroservicesHttpClientProvider().get();
+		
+		hystrixClient = new HystrixPersonClient(httpClient, mapper);
+		
+	}
 	
 	/**
 	 * Tests if {@link PersonClient#createPerson(CreatePersonRequest)} will call
@@ -82,7 +96,7 @@ public class HystrixPersonClientTest {
 	}
 	
 	/**
-	 * Tests if ({@link HystrixPersonClient#findPersonByUUID(UUID)} returns a specific person
+	 * Tests if ({@link HystrixPersonClient#searchPersonByUUID(UUID)} returns a specific person
 	 * when finding a "valid" person through its id
 	 */
 	@Test
@@ -92,7 +106,7 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpGet.class));
 		
-		PersonResource resource = hystrixClient.findPersonByUUID(uuid).toBlocking().single();
+		PersonResource resource = hystrixClient.searchPersonByUUID(uuid).toBlocking().single();
 		
 		assertEquals(uuid, resource.getUuid());
 		assertEquals("Willian", resource.getFirstName());
@@ -100,7 +114,7 @@ public class HystrixPersonClientTest {
 		
 	}
 	/**
-	 * Tests if ({@link HystrixPersonClient#findPersonByUUID(UUID)} will return 404 status
+	 * Tests if ({@link HystrixPersonClient#searchPersonByUUID(UUID)} will return 404 status
 	 * when finding a "invalid" person id 
 	 */
 	@Test
@@ -110,7 +124,44 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpGet.class));
 		
-		hystrixClient.findPersonByUUID(uuid).toBlocking().single();
+		hystrixClient.searchPersonByUUID(uuid).toBlocking().single();
+		
+	}
+	
+	/**
+	 * Tests if {@link HystrixPersonClient#searchBy(com.matera.microservices.queries.PersonQuery)} will return
+	 * the matching people
+	 * 
+	 * @throws Exception
+	 */
+	
+	@Test
+	public void findPeopleByQueryOk() throws Exception {
+		
+		Mockito.doReturn(httpSuccessFindPeopleResponse())
+		   .when(httpClient)
+		   .execute(Mockito.any(HttpGet.class));
+		
+		PersonQuery query = new PersonQuery.Builder()
+				.withFirstName("Willian")
+				.withLastName("Azevedo")
+				.withZipCode("87025640")
+				.build();
+		
+		PeopleResource people = hystrixClient.searchBy(query).toBlocking().single();
+		assertEquals(1, people.getPeopleResource().size());
+		
+		PersonResource person = people.getPeopleResource().get(0);
+		assertEquals("Willian", person.getFirstName());
+		assertEquals("Azevedo", person.getLastName());
+		assertEquals("87025640", person.getAddress().getZipCode());
+		
+	}
+	
+	@Test
+	public void findPeopleByQueryNotFound() throws Exception {
+		
+		
 		
 	}
 	
@@ -144,7 +195,7 @@ public class HystrixPersonClientTest {
 				.withCity("Maringá")
 				.withState("Paraná")
 				.withCountry("Brazil")
-				.withZipCode("87053070")
+				.withZipCode("87025640")
 				.build();
 		
 		return new PersonResource.Builder()
@@ -158,19 +209,20 @@ public class HystrixPersonClientTest {
 		
 	}
 	
-	private HttpResponse httpNotFoundResponse() throws Exception {
+	public PeopleResource newPeopleResource() {
 		
-		HttpResponse response = 
-				new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 4, 0), 404, null));
+		List<PersonResource> personList = new ArrayList<PersonResource>();
+		personList.add(newPersonResource());
 		
-		return response;
+		return new PeopleResource.Builder()
+				.withPeople(personList)
+				.build();
 		
 	}
 	
 	private HttpResponse httpSuccessCreatePersonResponse() throws Exception {
 		
-		BasicHttpEntity entity = new BasicHttpEntity();
-		entity.setContentType("application/json");
+		BasicHttpEntity entity = newBasicHttpEntity();
 		entity.setContent(new ByteArrayInputStream(mapper.writeValueAsBytes(newCreatePersonResponse())));
 		
 		HttpResponse response = newHttpSuccess();
@@ -182,8 +234,7 @@ public class HystrixPersonClientTest {
 	
 	private HttpResponse httpSuccessFindPersonResponse() throws Exception {
 		
-		BasicHttpEntity entity = new BasicHttpEntity();
-		entity.setContentType("application/json");
+		BasicHttpEntity entity = newBasicHttpEntity();
 		entity.setContent(new ByteArrayInputStream(mapper.writeValueAsBytes(newPersonResource())));
 		
 		HttpResponse response = newHttpSuccess();
@@ -191,10 +242,38 @@ public class HystrixPersonClientTest {
 		
 		return response;
 		
-	}	
+	}
+	
+	private HttpResponse httpSuccessFindPeopleResponse() throws Exception {
+		
+		BasicHttpEntity entity = newBasicHttpEntity();
+		entity.setContent(new ByteArrayInputStream(mapper.writeValueAsBytes(newPeopleResource())));
+		
+		HttpResponse response = newHttpSuccess();
+		response.setEntity(entity);
+		
+		return response;
+		
+	}		
 	
 	private HttpResponse newHttpSuccess() {
-		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 4, 0), 200, null));
+		return new BasicHttpResponse(new BasicStatusLine(
+										new ProtocolVersion("HTTP", 4, 0), 200, null));
+	}
+	
+	private HttpResponse httpNotFoundResponse() throws Exception {
+		
+		return new BasicHttpResponse(new BasicStatusLine(
+										new ProtocolVersion("HTTP", 4, 0), 404, null));
+		
+	}	
+	
+	private BasicHttpEntity newBasicHttpEntity() {
+		
+		BasicHttpEntity entity = new BasicHttpEntity();
+		entity.setContentType("application/json");		
+		return entity;
+		
 	}
 
 }
