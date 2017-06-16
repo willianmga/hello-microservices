@@ -70,9 +70,9 @@ public class PersonRS {
 		
 		PeopleResource people = service.findAllPeople(query).toBlocking().single();
 		
-		Response response = (people == null || people.getPeopleResource().size() > 0) ? 
-							   Response.ok(people).build() :
-							   Response.status(Status.NOT_FOUND).build();
+		Response response = (people == null || people.getPeopleResource().size() <= 0) ? 
+								Response.status(Status.NOT_FOUND).build() : 
+									Response.ok(people).build();
 		
 		return response;
 		
