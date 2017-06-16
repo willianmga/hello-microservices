@@ -17,9 +17,9 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
 
-import matera.com.hellomicroservices.core.config.HelloMicroservicesHttpClientProvider;
 import matera.com.hellomicroservices.core.config.HelloMicroservicesObjectMapperProvider;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.AddressResource;
@@ -42,19 +41,14 @@ public class HystrixPersonClientTest {
 
 	@Mock
 	private HttpClient httpClient;
-	
-	//@Spy
 	private ObjectMapper mapper = new ObjectMapper();
-	
-	@InjectMocks
 	private HystrixPersonClient hystrixClient;
-	
 	private UUID uuid = UUID.randomUUID();
 	
-	public HystrixPersonClientTest() {
+	@Before
+	public void init() {
 		
 		mapper = new HelloMicroservicesObjectMapperProvider().get();
-		httpClient = new HelloMicroservicesHttpClientProvider().get();
 		
 		hystrixClient = new HystrixPersonClient(httpClient, mapper);
 		
@@ -110,7 +104,7 @@ public class HystrixPersonClientTest {
 		
 		assertEquals(uuid, resource.getUuid());
 		assertEquals("Willian", resource.getFirstName());
-		assertEquals("87053070", resource.getAddress().getZipCode());
+		assertEquals("87025640", resource.getAddress().getZipCode());
 		
 	}
 	/**
