@@ -103,7 +103,7 @@ public class HystrixPersonClientTest {
 			
 		CreatePersonRequest person = newCreatePersonRequest();
 		
-		CreatePersonResponse response = hystrixClient.update(person, uuid).toBlocking().single();
+		CreatePersonResponse response = hystrixClient.update(uuid, person).toBlocking().single();
 		
 		assertEquals("Success", response.getMessage());
 		assertEquals(uuid, response.getId());
@@ -123,7 +123,7 @@ public class HystrixPersonClientTest {
 			.when(httpClient)
 			.execute(Mockito.any(HttpPut.class));
 		
-		hystrixClient.update(newCreatePersonRequest(), uuid);
+		hystrixClient.update(uuid, newCreatePersonRequest());
 		
 	}
 	

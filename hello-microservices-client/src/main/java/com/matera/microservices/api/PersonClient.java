@@ -30,10 +30,10 @@ public interface PersonClient {
 	/**
 	 * Updates a person 
 	 * 
-	 * @param request
+	 * @param id, request
 	 * @return
 	 */
-	public Observable<CreatePersonResponse> update(final CreatePersonRequest request, final UUID id);
+	public Observable<CreatePersonResponse> update(final UUID id, final CreatePersonRequest request);
 	
 	/**
 	 * Finds a person by it's id on middle service 

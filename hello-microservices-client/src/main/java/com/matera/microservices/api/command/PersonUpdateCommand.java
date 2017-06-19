@@ -42,15 +42,15 @@ public class PersonUpdateCommand extends HystrixCommand<CreatePersonResponse> {
 		
 	}	
 
-	public PersonUpdateCommand(HttpClient client, ObjectMapper mapper, CreatePersonRequest person, UUID uuid) {
+	public PersonUpdateCommand(HttpClient client, ObjectMapper mapper, UUID uuid, CreatePersonRequest person) {
 	
 		super(SETTER);
 		
 		this.client = client;
 		this.mapper = mapper;
-		this.person = person;
 		this.uuid = uuid;
-	
+		this.person = person;
+		
 	}
 
 	public CreatePersonResponse run() throws Exception {

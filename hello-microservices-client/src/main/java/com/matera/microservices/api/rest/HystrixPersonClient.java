@@ -39,9 +39,9 @@ public class HystrixPersonClient implements PersonClient {
 	}
 	
 	@Override
-	public Observable<CreatePersonResponse> update(final CreatePersonRequest request, final UUID id) {
+	public Observable<CreatePersonResponse> update(final UUID id, final CreatePersonRequest request) {
 		
-		return new PersonUpdateCommand(client, mapper, request, id).observe();
+		return new PersonUpdateCommand(client, mapper, id, request).observe();
 		
 	}	
 
