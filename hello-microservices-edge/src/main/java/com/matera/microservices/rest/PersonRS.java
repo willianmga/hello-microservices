@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -39,7 +40,7 @@ public class PersonRS {
 		
 		try {
 		
-			CreatePersonResponse response = service.createPerson(person).toBlocking().single();
+			CreatePersonResponse response = service.create(person).toBlocking().single();
 			
 			return Response.status(Status.CREATED)
 						   .header("location", "/persons/" + response.getId())
@@ -54,6 +55,29 @@ public class PersonRS {
 		
 	}
 	
+	@PUT
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response update(@PathParam("id") String uuid, CreatePersonRequest person) {
+		
+		try {
+		
+			CreatePersonResponse updated = service.update(uuid, person).toBlocking().single();
+			
+			return Response.ok(updated)
+							.header("location", "/persons/" + updated.getId())
+							.entity(updated)
+							.build();
+			
+		} catch(Exception e) {
+		
+			return Response.status(Status.SERVICE_UNAVAILABLE).build();
+			
+		}
+		
+	}
+	
 	@GET
 	@Path("/{personUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -61,7 +85,7 @@ public class PersonRS {
 		
 		try {
 		
-			PersonResource person = service.findPersonByUUID(uuid).toBlocking().single();
+			PersonResource person = service.findByUUID(uuid).toBlocking().single();
 			return Response.ok(person).build();
 								
 		} catch (NoSuchElementException | NullPointerException e) {
@@ -87,7 +111,7 @@ public class PersonRS {
 		
 		try {
 		
-			PeopleResource people = service.findAllPeople(query).toBlocking().single();
+			PeopleResource people = service.findAll(query).toBlocking().single();
 			return Response.ok(people).build();
 		
 		} catch(NoSuchElementException | NullPointerException e) {

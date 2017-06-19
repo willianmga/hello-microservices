@@ -21,13 +21,23 @@ public class PersonService {
 		this.client = client;
 	}
 
-	public Observable<CreatePersonResponse> createPerson(CreatePersonRequest person) {
+	public Observable<CreatePersonResponse> create(CreatePersonRequest person) {
 		
 		return client.create(person);
 		
 	}
+	
+	public Observable<CreatePersonResponse> update(String uuid, CreatePersonRequest person) {
+		
+		try {
+			return client.update(UUID.fromString(uuid), person);
+		} catch(IllegalArgumentException e) {
+			return null;
+		}
+		
+	}		
 
-	public Observable<PersonResource> findPersonByUUID(String uuid) {
+	public Observable<PersonResource> findByUUID(String uuid) {
 		
 		try {
 			return client.searchByUUID(UUID.fromString(uuid));
@@ -37,10 +47,10 @@ public class PersonService {
 				
 	}
 	
-	public Observable<PeopleResource> findAllPeople(PersonQuery query) {
+	public Observable<PeopleResource> findAll(PersonQuery query) {
 		
 		return client.searchBy(query);
 		
-	}	
+	}
 
 }

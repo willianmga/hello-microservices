@@ -49,7 +49,7 @@ public class PersonRSTest {
 		CreatePersonRequest person = newCreatePersonRequest();		
 		Observable<CreatePersonResponse> observable = Observable.just(newCreatePersonResponse());
 		
-		Mockito.when(personService.createPerson(person)).thenReturn(observable);
+		Mockito.when(personService.create(person)).thenReturn(observable);
 		
 		Response response = personRS.createPerson(person);
 		
@@ -58,6 +58,53 @@ public class PersonRSTest {
 		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 		assertEquals(RANDOM_UUID, created.getId().toString());
 		assertEquals("Success", created.getMessage());
+		
+	}
+	
+	/**
+	 * Tests if ({@link PersonRS#update(String, CreatePersonRequest)} will return 503
+	 * when trying to update a person and the service is not avaliable
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void createPersonServiceUnavaliable() throws Exception {
+		
+		CreatePersonRequest person = newCreatePersonRequest();		
+		
+		Mockito.doReturn(Observable.empty())
+			.when(personService)
+			.update(Mockito.anyString(), Mockito.any(CreatePersonRequest.class));
+		
+		Response response = personRS.update(RANDOM_UUID, person);
+		
+		assertEquals(503, response.getStatus());
+		
+	}
+	
+	/**
+	 * Tests if ({@link PersonRS#update(String, CreatePersonRequest)} will return an observable 
+	 * of CreatePersonResponse when updating a person
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void updatePersonOk() throws Exception {
+		
+		CreatePersonRequest person = newCreatePersonRequest();
+		Observable<CreatePersonResponse> observable = Observable.just(newCreatePersonResponse());
+		
+		Mockito.doReturn(observable)
+			.when(personService)
+			.update(RANDOM_UUID, person);
+		
+		Response response = personRS.update(RANDOM_UUID, person);
+		
+		CreatePersonResponse updated = (CreatePersonResponse) response.getEntity();
+		
+		assertEquals(Status.OK.getStatusCode(), response.getStatus());
+		assertEquals(RANDOM_UUID, updated.getId().toString());
+		assertEquals("Success", updated.getMessage());
 		
 	}
 
@@ -73,7 +120,7 @@ public class PersonRSTest {
 		
 		Observable<PersonResource> observable = Observable.just(newPersonResource(RANDOM_UUID));
 		
-		Mockito.when(personService.findPersonByUUID(RANDOM_UUID)).thenReturn(observable);
+		Mockito.when(personService.findByUUID(RANDOM_UUID)).thenReturn(observable);
 		
 		Response response = personRS.findPersonByUUID(RANDOM_UUID);
 		
@@ -97,7 +144,7 @@ public class PersonRSTest {
 		
 		Observable<PersonResource> observable = Observable.empty();
 		
-		Mockito.when(personService.findPersonByUUID(RANDOM_UUID))
+		Mockito.when(personService.findByUUID(RANDOM_UUID))
 			   .thenReturn(observable);
 		
 		Response response = personRS.findPersonByUUID(RANDOM_UUID);
@@ -117,7 +164,7 @@ public class PersonRSTest {
 		
 		Observable<PeopleResource> observable = Observable.just(newPeopleResource());
 			
-		Mockito.when(personService.findAllPeople(Mockito.any(PersonQuery.class)))
+		Mockito.when(personService.findAll(Mockito.any(PersonQuery.class)))
 		       .thenReturn(observable);
 		
 		Response response = personRS.findAllPeople("Willian", "Azevedo", "");
@@ -144,7 +191,7 @@ public class PersonRSTest {
 			
 		Mockito.doReturn(observable)
 			   .when(personService)
-			   .findAllPeople(Mockito.any(PersonQuery.class));
+			   .findAll(Mockito.any(PersonQuery.class));
 		
 		Response response = personRS.findAllPeople("Willian", "Azevedo", "");
 		
