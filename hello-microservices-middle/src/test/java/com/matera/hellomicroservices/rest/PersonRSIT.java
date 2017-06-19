@@ -16,7 +16,8 @@ public class PersonRSIT {
 	//@BeforeClass
 	public static void setup() {
 		
-		RestAssured.port = 9292;
+		RestAssured.port = 9080;
+		RestAssured.basePath = "";  // "/hellomicroservicesmiddle/";
 		RestAssured.baseURI = "http://localhost";
 		
 	}
@@ -24,16 +25,7 @@ public class PersonRSIT {
 	//@Test
 	public void createPeopleOk() {
 		
-		CreatePersonRequest person = new CreatePersonRequest.Builder()
-				.withFirstName("Willian")
-				.withLastName("Azevedo")
-				.withEmail("willian-mga@hotmail.com")
-				.withNickName("bili")
-				.withCity("Maringa")
-				.withState("Parana")
-				.withCountry("Brazil")
-				.withZipCode("87025640")
-				.build();
+		CreatePersonRequest person = newCreatePersonRequest();
 		
 		given()
 			.accept(ContentType.JSON)
@@ -44,7 +36,55 @@ public class PersonRSIT {
 		.then()
 			.statusCode(200)
 			.contentType(ContentType.JSON)
-			.header("location", Matchers.notNullValue());
+			.header("location", Matchers.notNullValue())
+			.header("message", "Success");
+		
+	}
+
+	//@Test
+	public void createAndUpdatePersonOk() {
+		
+		// Creates the person
+		CreatePersonRequest created = newCreatePersonRequest();
+		
+		String personID = given()
+							.accept(ContentType.JSON)
+							.contentType(ContentType.JSON)
+							.body(created)
+						.when()
+							.post("/persons")
+						.then()
+							.statusCode(200)
+							.contentType(ContentType.JSON)
+							.extract().header("location");
+		
+		personID = personID.replace("/persons/", "");
+			
+		// updates the person
+		
+		CreatePersonRequest updated = new CreatePersonRequest.Builder()
+				.withFirstName("Paulo")
+				.withLastName("Almeida")
+				.withEmail("palmeida@hotmail.com")
+				.withNickName("paulo")
+				.withCity(created.getCity())
+				.withState(created.getState())
+				.withCountry(created.getCountry())
+				.withZipCode(created.getZipCode())
+				.build();
+		
+		given()
+			.pathParam("id", personID)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+			.body(updated)
+		.when()
+			.put("/persons/{id}")
+		.then()
+			.statusCode(200)
+			.contentType(ContentType.JSON)
+			.header("location", Matchers.notNullValue())
+			.header("message", "Success");		
 		
 	}
 	
@@ -92,12 +132,28 @@ public class PersonRSIT {
 			.contentType(ContentType.JSON)
 			.body(request)
 		.when()
-			.post("/persons")
+		 	.post("/persons")
 		.then()
 			.statusCode(200)
 			.extract().header("location");
 		
 		return location.replace("/persons/", "");
+		
 	}
+	
+	private CreatePersonRequest newCreatePersonRequest() {
+		
+		return new CreatePersonRequest.Builder()
+				.withFirstName("Willian")
+				.withLastName("Azevedo")
+				.withEmail("willian-mga@hotmail.com")
+				.withNickName("bili")
+				.withCity("Maringa")
+				.withState("Parana")
+				.withCountry("Brazil")
+				.withZipCode("87025640")
+				.build();
+		
+	}	
 	
 }

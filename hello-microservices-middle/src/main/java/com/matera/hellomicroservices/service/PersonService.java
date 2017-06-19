@@ -28,15 +28,13 @@ public class PersonService {
 	
 	public CreatePersonResponse insert(CreatePersonRequest request) {
 
-		Person person = PersonConverter.convertToPerson(request, UUID.randomUUID());
-
 		try {
+			
+			Person person = PersonConverter.convertToPerson(request, UUID.randomUUID());
 			
 			store.insert(person);
 
-			CreatePersonResponse response = PersonConverter.convertToResponse(person, "Success");
-		
-			return response;
+			return PersonConverter.convertToResponse(person, "Success");
 			
 		} catch(Exception e) {
 			
@@ -46,6 +44,25 @@ public class PersonService {
 		}
 		
 	}
+	
+	public CreatePersonResponse update(String id, CreatePersonRequest request) {
+	
+		try {
+		
+			Person person = PersonConverter.convertToPerson(request, UUID.fromString(id));
+			
+			store.update(person);
+			
+			return PersonConverter.convertToResponse(person, "Success");
+			
+		} catch(Exception e) {
+			
+			throw new RuntimeException("Failed to update person. \n\n" + 
+									   "Reason: " + e.getMessage());
+			
+		}
+	}
+	
 	
 	public PeopleResource findAllPeople(PersonFilter filter) {
 		
@@ -73,18 +90,6 @@ public class PersonService {
 		PersonResource resource = PersonConverter.converToPersonResource(found);
 		
 		return resource;
-		
-	}
-
-	public PeopleResource findPeopleByZipCode(String zipCode) {
-		
-		checkArgument(zipCode != null, "the zip code must not be null");
-		
-		List<Person> people = store.findByZipCode(zipCode);
-		
-		PeopleResource peopleResource = PersonConverter.convertToPeopleResource(people);
-		
-		return peopleResource;
 		
 	}
 
