@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -35,7 +36,7 @@ public class PersonRS {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addPerson(CreatePersonRequest request) {
+	public Response create(CreatePersonRequest request) {
 
 		CreatePersonResponse response = service.insert(request);
 		
@@ -45,9 +46,23 @@ public class PersonRS {
 		
 	}
 	
+	@PUT
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response update(@PathParam("id") String id, CreatePersonRequest request) {
+		
+		CreatePersonResponse response = service.update(id, request);
+		
+		String location = "/persons/" + response.getId();
+		
+		return Response.ok(response).header("location", location).build();
+		
+	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAllPeople(
+	public Response findAll(
 			@QueryParam("firstName") String firstName, 
 			@QueryParam("lastName") String lastName,
 			@QueryParam("zipCode") String zipCode) {
@@ -71,7 +86,7 @@ public class PersonRS {
 	@GET
 	@Path("/{userUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findPersonByUUID(@PathParam("userUUID") String userUUID) {
+	public Response findByUUID(@PathParam("userUUID") String userUUID) {
 		
 		PersonResource person; 
 		
@@ -88,20 +103,5 @@ public class PersonRS {
 		return response;
 				
 	}	
-	
-	@GET
-	@Path("/{zipCode: [0-9]+}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response findPeopleByZipCode(@PathParam("zipCode") String zipCode) {
-		
-		PeopleResource people = service.findPeopleByZipCode(zipCode);
-		
-		Response response = (people == null) ?
-								Response.status(Status.NOT_FOUND).build() :
-									Response.ok(people).build();
-					
-		return response;
-		
-	}
 
 }
