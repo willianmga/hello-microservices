@@ -11,6 +11,7 @@ import com.matera.microservices.api.PersonClient;
 import com.matera.microservices.api.command.PersonCreateCommand;
 import com.matera.microservices.api.command.PersonFindAllPeopleCommand;
 import com.matera.microservices.api.command.PersonFindByIdCommand;
+import com.matera.microservices.api.command.PersonUpdateCommand;
 
 import matera.com.hellomicroservices.core.config.HelloMicroservices;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
@@ -31,14 +32,21 @@ public class HystrixPersonClient implements PersonClient {
 	}
 
 	@Override
-	public Observable<CreatePersonResponse> createPerson(final CreatePersonRequest request) {
+	public Observable<CreatePersonResponse> create(final CreatePersonRequest request) {
 		
 		return new PersonCreateCommand(client, mapper, request).observe();
 		
 	}
+	
+	@Override
+	public Observable<CreatePersonResponse> update(final CreatePersonRequest request, final UUID id) {
+		
+		return new PersonUpdateCommand(client, mapper, request, id).observe();
+		
+	}	
 
 	@Override
-	public Observable<PersonResource> searchPersonByUUID(final UUID id) {
+	public Observable<PersonResource> searchByUUID(final UUID id) {
 		
 		return new PersonFindByIdCommand(client, mapper, id).observe();
 

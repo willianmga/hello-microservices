@@ -25,8 +25,15 @@ public interface PersonClient {
 	 * @return Observable<CreatePersonResponse>
 	 * 
 	 */
-	public Observable<CreatePersonResponse> createPerson(final CreatePersonRequest request);
+	public Observable<CreatePersonResponse> create(final CreatePersonRequest request);
 	
+	/**
+	 * Updates a person 
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public Observable<CreatePersonResponse> update(final CreatePersonRequest request, final UUID id);
 	
 	/**
 	 * Finds a person by it's id on middle service 
@@ -35,7 +42,7 @@ public interface PersonClient {
 	 * @return {@link Observable<PersonResource}
 	 * 
 	 */
-	public Observable<PersonResource> searchPersonByUUID(final UUID id);
+	public Observable<PersonResource> searchByUUID(final UUID id);
 	
 	
 	/**

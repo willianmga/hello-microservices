@@ -13,6 +13,7 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
@@ -55,7 +56,7 @@ public class HystrixPersonClientTest {
 	}
 	
 	/**
-	 * Tests if {@link PersonClient#createPerson(CreatePersonRequest)} will call
+	 * Tests if {@link PersonClient#create(CreatePersonRequest)} will call
 	 * middle service and return {@link Observable} of the response
 	 */
 	@Test
@@ -67,7 +68,7 @@ public class HystrixPersonClientTest {
 			.execute(Mockito.any(HttpPost.class));
 		
 		CreatePersonRequest person = newCreatePersonRequest();
-		CreatePersonResponse personResponse = hystrixClient.createPerson(person).toBlocking().single();
+		CreatePersonResponse personResponse = hystrixClient.create(person).toBlocking().single();
 
 		assertEquals("Success", personResponse.getMessage());
 		assertThat(personResponse.getId(), Matchers.notNullValue());
@@ -75,7 +76,7 @@ public class HystrixPersonClientTest {
 	}
 	
 	/**
-	 * Tests if ({@link HystrixPersonClient#createPerson(CreatePersonRequest)} will return 404
+	 * Tests if ({@link HystrixPersonClient#create(CreatePersonRequest)} will return 404
 	 * from middle when the service is not up
 	 */
 	@Test
@@ -85,12 +86,49 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpPost.class));
 		
-		hystrixClient.createPerson(newCreatePersonRequest()).toBlocking().single();
+		hystrixClient.create(newCreatePersonRequest()).toBlocking().single();
 
 	}
 	
 	/**
-	 * Tests if ({@link HystrixPersonClient#searchPersonByUUID(UUID)} returns a specific person
+	 * Tests if ({@link HystrixPersonClient#update(CreatePersonRequest, UUID)} will return 200
+	 * from middle when updating an existing person 
+	 */
+	@Test
+	public void updatePersonOk() throws Exception {
+		
+		Mockito.doReturn(httpSuccessCreatePersonResponse())
+			.when(httpClient)
+			.execute(Mockito.any(HttpPut.class));
+			
+		CreatePersonRequest person = newCreatePersonRequest();
+		
+		CreatePersonResponse response = hystrixClient.update(person, uuid).toBlocking().single();
+		
+		assertEquals("Success", response.getMessage());
+		assertEquals(uuid, response.getId());
+		
+	}
+	
+	/**
+	 * Tests if {@link HystrixPersonClient#update(CreatePersonRequest, UUID)} will return 404
+	 * from middle when no person was found by given id
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void updatePersonFails() throws Exception {
+
+		Mockito.doReturn(httpNotFoundResponse())
+			.when(httpClient)
+			.execute(Mockito.any(HttpPut.class));
+		
+		hystrixClient.update(newCreatePersonRequest(), uuid);
+		
+	}
+	
+	/**
+	 * Tests if ({@link HystrixPersonClient#searchByUUID(UUID)} returns a specific person
 	 * when finding a "valid" person through its id
 	 */
 	@Test
@@ -100,7 +138,7 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpGet.class));
 		
-		PersonResource resource = hystrixClient.searchPersonByUUID(uuid).toBlocking().single();
+		PersonResource resource = hystrixClient.searchByUUID(uuid).toBlocking().single();
 		
 		assertEquals(uuid, resource.getUuid());
 		assertEquals("Willian", resource.getFirstName());
@@ -108,7 +146,7 @@ public class HystrixPersonClientTest {
 		
 	}
 	/**
-	 * Tests if ({@link HystrixPersonClient#searchPersonByUUID(UUID)} will return 404 status
+	 * Tests if ({@link HystrixPersonClient#searchByUUID(UUID)} will return 404 status
 	 * when finding a "invalid" person id 
 	 */
 	@Test
@@ -118,7 +156,7 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpGet.class));
 		
-		hystrixClient.searchPersonByUUID(uuid).toBlocking().single();
+		hystrixClient.searchByUUID(uuid).toBlocking().single();
 		
 	}
 	
@@ -177,7 +215,7 @@ public class HystrixPersonClientTest {
 	public CreatePersonResponse newCreatePersonResponse() {
 
 		return new CreatePersonResponse.Builder()
-						.withID(UUID.randomUUID())
+						.withID(uuid)
 						.withMessage("Success")
 						.build();
 

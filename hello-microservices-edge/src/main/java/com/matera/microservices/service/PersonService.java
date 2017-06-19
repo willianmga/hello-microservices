@@ -23,14 +23,14 @@ public class PersonService {
 
 	public Observable<CreatePersonResponse> createPerson(CreatePersonRequest person) {
 		
-		return client.createPerson(person);
+		return client.create(person);
 		
 	}
 
 	public Observable<PersonResource> findPersonByUUID(String uuid) {
 		
 		try {
-			return client.searchPersonByUUID(UUID.fromString(uuid));
+			return client.searchByUUID(UUID.fromString(uuid));
 		} catch(IllegalArgumentException e) {
 			return null;
 		}
