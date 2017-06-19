@@ -55,7 +55,7 @@ public class PersonRSTest {
 		
 		CreatePersonResponse created = (CreatePersonResponse) response.getEntity(); 
 		
-		assertEquals(Status.OK.getStatusCode(), response.getStatus());
+		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 		assertEquals(RANDOM_UUID, created.getId().toString());
 		assertEquals("Success", created.getMessage());
 		
@@ -95,7 +95,7 @@ public class PersonRSTest {
 	@Test
 	public void findPersonByInvalidUUID() throws Exception {
 		
-		Observable<PersonResource> observable = Observable.just(null);
+		Observable<PersonResource> observable = Observable.empty();
 		
 		Mockito.when(personService.findPersonByUUID(RANDOM_UUID))
 			   .thenReturn(observable);
@@ -140,7 +140,7 @@ public class PersonRSTest {
 	@Test 
 	public void findPersonByQueryNotFound() throws Exception {
 		
-		Observable<PeopleResource> observable = Observable.just(null);
+		Observable<PeopleResource> observable = Observable.empty();
 			
 		Mockito.doReturn(observable)
 			   .when(personService)

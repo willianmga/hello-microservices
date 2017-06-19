@@ -60,15 +60,24 @@ public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 		request.setHeader("Accept", "application/json");
 		request.setEntity(new StringEntity(mapper.writeValueAsString(createRequest)));
 		
-		HttpResponse response = clientProvider.execute(request);
+		try {
 		
-		if (response.getStatusLine().getStatusCode() == 200) {
-			try (InputStream is = response.getEntity().getContent()) {
-				return mapper.readValue(is, CreatePersonResponse.class);
+			HttpResponse response = clientProvider.execute(request);
+			
+			if (response.getStatusLine().getStatusCode() == 200) {
+				try (InputStream is = response.getEntity().getContent()) {
+					return mapper.readValue(is, CreatePersonResponse.class);
+				}
 			}
+			
+			return null;
+			
+		} catch(Exception e) {
+			
+			return null;
+			
 		}
-		
-		return null;
+			
 	}
 
 }

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+sudo docker tag hellomicroservicesmiddle willianmga/hellomicroservices:hellomicroservicesmiddle
+sudo docker tag hellomicroservicesedge willianmga/hellomicroservices:hellomicroservicesedge
+
+sudo docker push willianmga/hellomicroservices:hellomicroservicesmiddle
+sudo docker push willianmga/hellomicroservices:hellomicroservicesedge

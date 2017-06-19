@@ -65,22 +65,31 @@ public class PersonFindAllPeopleCommand extends HystrixCommand<PeopleResource> {
 		
 		if (isNotBlank(personQuery.getZipCode())) {
 			uri.queryParam("zipCode", personQuery.getZipCode());
-		}		
+		}	
 		
 		HttpGet request = new HttpGet(uri.build());
 		request.setHeader("Accept", "application/json");
 		
-		HttpResponse response = client.execute(request);
+		System.out.println("Http get para uri: " + uri.build().toString());
 		
-		if (response.getStatusLine().getStatusCode() == 200) {
-			try (InputStream is = response.getEntity().getContent()) {
-				return mapper.readValue(is, PeopleResource.class);
+		try {
+		
+			HttpResponse response = client.execute(request);
+			
+			if (response.getStatusLine().getStatusCode() == 200) {
+				try (InputStream is = response.getEntity().getContent()) {
+					return mapper.readValue(is, PeopleResource.class);
+				}
 			}
+			
+			return null;
+		
+		} catch(Exception e) {
+			
+			return null;
+			
 		}
 		
-		return null;
 	}
-	
-	
 
 }

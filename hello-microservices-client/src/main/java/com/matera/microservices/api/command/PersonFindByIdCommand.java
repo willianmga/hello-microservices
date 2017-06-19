@@ -33,10 +33,10 @@ public class PersonFindByIdCommand extends HystrixCommand<PersonResource> {
 		
 		DynamicPropertyFactory config = DynamicPropertyFactory.getInstance();                                  
 		HELLO_MIDDLE_HOST = config.getStringProperty("hellomicroservices.middle.host", 
-													 "http://hellomicroservicesmiddle:8080/hellomicroservicesmiddle/persons");
+													 "http://hellomicroservicesmiddle:8080/hellomicroservicesmiddle/persons/{id}");
 		
 		SETTER = Setter.withGroupKey(HelloMicroservicesGroupKey.MIDDLE)
-				.andCommandKey(HystrixCommandKey.Factory.asKey(PersonCreateCommand.class.getSimpleName()));		
+				.andCommandKey(HystrixCommandKey.Factory.asKey(PersonFindByIdCommand.class.getSimpleName()));		
 		
 	}	
 
@@ -58,15 +58,23 @@ public class PersonFindByIdCommand extends HystrixCommand<PersonResource> {
 		HttpGet request = new HttpGet(uri);
 		request.setHeader("Accept", "application/json");
 		
-		HttpResponse response = client.execute(request);
+		try {
 		
-		if (response.getStatusLine().getStatusCode() == 200) {
-			try (InputStream is = response.getEntity().getContent()) {
-				return mapper.readValue(is, PersonResource.class);
+			HttpResponse response = client.execute(request);
+			
+			if (response.getStatusLine().getStatusCode() == 200) {
+				try (InputStream is = response.getEntity().getContent()) {
+					return mapper.readValue(is, PersonResource.class);
+				}
 			}
-		}
+			
+			return null;
 		
-		return null;
+		} catch(Exception e) {
+			
+			return null;
+			
+		}
 		
 	}
 

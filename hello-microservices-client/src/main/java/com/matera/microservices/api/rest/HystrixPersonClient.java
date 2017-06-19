@@ -22,7 +22,7 @@ import rx.Observable;
 public class HystrixPersonClient implements PersonClient {
 	
 	private final ObjectMapper mapper;
-	private HttpClient client;
+	private final HttpClient client;
 	
 	@Inject
 	public HystrixPersonClient(@HelloMicroservices HttpClient provider,  @HelloMicroservices ObjectMapper mapper) {
@@ -31,21 +31,21 @@ public class HystrixPersonClient implements PersonClient {
 	}
 
 	@Override
-	public Observable<CreatePersonResponse> createPerson(CreatePersonRequest request) {
+	public Observable<CreatePersonResponse> createPerson(final CreatePersonRequest request) {
 		
 		return new PersonCreateCommand(client, mapper, request).observe();
 		
 	}
 
 	@Override
-	public Observable<PersonResource> searchPersonByUUID(UUID id) {
+	public Observable<PersonResource> searchPersonByUUID(final UUID id) {
 		
 		return new PersonFindByIdCommand(client, mapper, id).observe();
 
 	}
 
 	@Override
-	public Observable<PeopleResource> searchBy(PersonQuery personQuery) {
+	public Observable<PeopleResource> searchBy(final PersonQuery personQuery) {
 		
 		return new PersonFindAllPeopleCommand(client, mapper, personQuery).observe();
 		

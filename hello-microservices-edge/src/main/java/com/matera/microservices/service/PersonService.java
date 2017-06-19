@@ -27,20 +27,20 @@ public class PersonService {
 		
 	}
 
-	public Observable<PeopleResource> findAllPeople(PersonQuery query) {
-		
-		return client.searchBy(query);
-		
-	}
-
 	public Observable<PersonResource> findPersonByUUID(String uuid) {
 		
 		try {
 			return client.searchPersonByUUID(UUID.fromString(uuid));
-		} catch (Exception e) {
-			return null;	
+		} catch(IllegalArgumentException e) {
+			return null;
 		}
-		
+				
 	}
+	
+	public Observable<PeopleResource> findAllPeople(PersonQuery query) {
+		
+		return client.searchBy(query);
+		
+	}	
 
 }

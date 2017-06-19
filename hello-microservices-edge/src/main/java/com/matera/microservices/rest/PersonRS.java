@@ -1,5 +1,7 @@
 package com.matera.microservices.rest;
 
+import java.util.NoSuchElementException;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,8 +37,20 @@ public class PersonRS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createPerson(CreatePersonRequest person) {
 		
-		CreatePersonResponse response = service.createPerson(person).toBlocking().single();
-		return Response.ok(response).build();
+		try {
+		
+			CreatePersonResponse response = service.createPerson(person).toBlocking().single();
+			
+			return Response.status(Status.CREATED)
+						   .header("location", "/persons/" + response.getId())
+						   .entity(response)
+						   .build();
+		
+		} catch (NoSuchElementException | NullPointerException e) {
+			
+			return Response.status(Status.SERVICE_UNAVAILABLE).build();
+			
+		}
 		
 	}
 	
@@ -45,13 +59,16 @@ public class PersonRS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findPersonByUUID(@PathParam("personUUID") String uuid) {
 		
-		PersonResource person = service.findPersonByUUID(uuid).toBlocking().single();
+		try {
 		
-		Response response = (person == null) ? 
-								Response.status(Status.NOT_FOUND).build() :
-									Response.ok(person).build();
-		
-		return response;
+			PersonResource person = service.findPersonByUUID(uuid).toBlocking().single();
+			return Response.ok(person).build();
+								
+		} catch (NoSuchElementException | NullPointerException e) {
+			
+			return Response.status(Status.NOT_FOUND).build();
+			
+		}
 		
 	}
 	
@@ -68,13 +85,16 @@ public class PersonRS {
 				.withZipCode(zipCode)
 				.build();
 		
-		PeopleResource people = service.findAllPeople(query).toBlocking().single();
+		try {
 		
-		Response response = (people == null || people.getPeopleResource().size() <= 0) ? 
-								Response.status(Status.NOT_FOUND).build() : 
-									Response.ok(people).build();
+			PeopleResource people = service.findAllPeople(query).toBlocking().single();
+			return Response.ok(people).build();
 		
-		return response;
+		} catch(NoSuchElementException | NullPointerException e) {
+			
+			return Response.status(Status.NOT_FOUND).build();
+			
+		}
 		
 	}
 	
