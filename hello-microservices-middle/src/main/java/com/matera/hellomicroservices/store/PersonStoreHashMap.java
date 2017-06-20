@@ -21,6 +21,15 @@ public class PersonStoreHashMap implements PersonStore {
 		
 		fakeData.put(person.getId(), person);
 		
+	}
+	
+	public void delete(UUID id) {
+		
+		Person removed = fakeData.remove(id);
+		
+		if (removed == null) 
+			throw new NullPointerException();
+		
 	}	
 
 	public Person getById(UUID id) {

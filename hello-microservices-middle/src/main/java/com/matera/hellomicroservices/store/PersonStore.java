@@ -9,6 +9,7 @@ public interface PersonStore {
 	
 	void insert(Person person);
 	void update(Person person);
+	void delete(UUID id);
 	
 	Person getById(UUID id);
 	List<Person> findAllPeople();

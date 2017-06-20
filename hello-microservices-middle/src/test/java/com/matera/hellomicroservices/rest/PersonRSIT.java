@@ -5,6 +5,8 @@ import static com.jayway.restassured.RestAssured.given;
 import java.util.UUID;
 
 import org.hamcrest.Matchers;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
@@ -13,16 +15,16 @@ import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 
 public class PersonRSIT {
 
-	//@BeforeClass
+	@BeforeClass
 	public static void setup() {
 		
 		RestAssured.port = 9080;
-		RestAssured.basePath = "";  // "/hellomicroservicesmiddle/";
+		RestAssured.basePath = "/hellomicroservicesmiddle/";
 		RestAssured.baseURI = "http://localhost";
 		
 	}
 
-	//@Test
+	@Test
 	public void createPeopleOk() {
 		
 		CreatePersonRequest person = newCreatePersonRequest();
@@ -36,29 +38,16 @@ public class PersonRSIT {
 		.then()
 			.statusCode(200)
 			.contentType(ContentType.JSON)
-			.header("location", Matchers.notNullValue())
-			.header("message", "Success");
+			.header("location", Matchers.notNullValue());
 		
 	}
 
-	//@Test
+	@Test
 	public void createAndUpdatePersonOk() {
 		
 		// Creates the person
-		CreatePersonRequest created = newCreatePersonRequest();
-		
-		String personID = given()
-							.accept(ContentType.JSON)
-							.contentType(ContentType.JSON)
-							.body(created)
-						.when()
-							.post("/persons")
-						.then()
-							.statusCode(200)
-							.contentType(ContentType.JSON)
-							.extract().header("location");
-		
-		personID = personID.replace("/persons/", "");
+
+		String personID = createPerson(newCreatePersonRequest());
 			
 		// updates the person
 		
@@ -67,10 +56,10 @@ public class PersonRSIT {
 				.withLastName("Almeida")
 				.withEmail("palmeida@hotmail.com")
 				.withNickName("paulo")
-				.withCity(created.getCity())
-				.withState(created.getState())
-				.withCountry(created.getCountry())
-				.withZipCode(created.getZipCode())
+				.withCity("Maringá")
+				.withState("Paraná")
+				.withCountry("Brasil")
+				.withZipCode("87053000")
 				.build();
 		
 		given()
@@ -83,12 +72,66 @@ public class PersonRSIT {
 		.then()
 			.statusCode(200)
 			.contentType(ContentType.JSON)
-			.header("location", Matchers.notNullValue())
-			.header("message", "Success");		
+			.header("location", Matchers.notNullValue());
+		
+	}
+
+	@Test
+	public void createAndDeletePersonOk() {
+		
+		// Creates the person
+
+		String personID = createPerson(newCreatePersonRequest());
+		
+		// delete the person
+		
+		given()
+			.pathParam("id", personID)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+		.when()
+			.delete("/persons/{id}")
+		.then()
+			.statusCode(200)
+			.header("message", Matchers.notNullValue());		
 		
 	}
 	
-	//@Test
+	@Test
+	public void deletePersonThroughInvalidID() {
+
+		final String invalidID = "12345";
+		
+		given()
+			.pathParam("id", invalidID)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+		.when()
+			.delete("/persons/{id}")
+		.then()
+			.statusCode(400)
+			.header("message", Matchers.notNullValue());
+		
+	}
+	
+	@Test
+	public void deletePersonThroughInexistentID() {
+		
+		final String inexistentID = UUID.randomUUID().toString();
+		
+		given()
+			.pathParam("id", inexistentID)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+		.when()
+			.delete("/persons/{id}")
+		.then()
+			.statusCode(404)
+			.header("message", Matchers.notNullValue());			
+		
+	}
+	
+	@Test
 	public void findPersonByID() {
 		
 		CreatePersonRequest paulo = new CreatePersonRequest.Builder()
@@ -114,7 +157,7 @@ public class PersonRSIT {
 		
 	}
 	
-	//@Test
+	@Test
 	public void retrievePersonByInvalidId() {
 		
 		given().

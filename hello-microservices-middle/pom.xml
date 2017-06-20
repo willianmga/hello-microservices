@@ -89,6 +89,7 @@
 	</dependencies>
 
 	<profiles>
+	
 		<profile>
 			<id>integration-test</id>
 			<activation>
@@ -109,11 +110,10 @@
 								<phase>pre-integration-test</phase>
 								<configuration>
 									<fork>true</fork>
-									<path>/crudmicroservicesmiddle</path>
+									<path>/hellomicroservicesmiddle</path>
 									<port>${tomcat.port}</port>
 									<update>true</update>
 									<systemProperties>
-										<archaius.deployment.environment>travis</archaius.deployment.environment>
 										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
 										<application.version>${project.version}</application.version>
 										<http.port>${tomcat.port}</http.port>
@@ -130,6 +130,7 @@
 							</execution>
 						</executions>
 					</plugin>
+					
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -146,10 +147,11 @@
 				</plugins>
 			</build>
 		</profile>
-
+		
 	</profiles>	
 
 	<build>
+	
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -237,9 +239,9 @@
 					<warName>hellomicroservicesmiddle</warName>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 
 	</build>
-
 
 </project>

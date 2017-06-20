@@ -3,6 +3,7 @@ package com.matera.hellomicroservices.rest;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -57,6 +58,34 @@ public class PersonRS {
 		String location = "/persons/" + response.getId();
 		
 		return Response.ok(response).header("location", location).build();
+		
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	public Response delete(@PathParam("id") String id) {
+		
+		try {
+			
+			service.delete(id);
+			
+			return Response.ok()
+					.header("message", "Success") 
+					.build();
+			
+		} catch(NullPointerException e) {
+			
+			return Response.status(Status.NOT_FOUND)
+					.header("message", "id not found")
+					.build();
+		
+		} catch(IllegalArgumentException e) {
+			
+			return Response.status(Status.BAD_REQUEST)
+					.header("message", e.getMessage())
+					.build();
+			
+		} 		
 		
 	}
 	

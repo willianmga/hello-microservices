@@ -63,6 +63,14 @@ public class PersonService {
 		}
 	}
 	
+	public void delete(String id) {
+		
+		checkArgument(id != null, "the id must not be null");
+		
+		store.delete(UUID.fromString(id));
+			
+	}	
+	
 	
 	public PeopleResource findAllPeople(PersonFilter filter) {
 		
