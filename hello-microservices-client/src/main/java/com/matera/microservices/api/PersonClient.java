@@ -41,7 +41,7 @@ public interface PersonClient {
 	 * @param id
 	 * @return
 	 */
-	public Observable<Void> delete(final UUID id);
+	public Observable<Integer> delete(final UUID id);
 	
 	/**
 	 * Finds a person by it's id on middle service 

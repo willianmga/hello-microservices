@@ -15,7 +15,7 @@ import com.netflix.config.DynamicStringProperty;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandKey;
 
-public class PersonDeleteCommand extends HystrixCommand<Void> {
+public class PersonDeleteCommand extends HystrixCommand<Integer> {
 
 	private static final HystrixCommand.Setter SETTER;
 	private static final DynamicStringProperty HELLO_MIDDLE_HOST;	
@@ -43,17 +43,14 @@ public class PersonDeleteCommand extends HystrixCommand<Void> {
 		
 	}
 
-	public Void run() throws Exception {
+	public Integer run() throws Exception {
 		
 		URI uri = UriBuilder.fromPath(HELLO_MIDDLE_HOST.get()).build(id);
 		
 		HttpDelete request = new HttpDelete(uri);
         HttpResponse response = client.execute(request);
 		
-		if (response.getStatusLine().getStatusCode() != 200)
-			throw new RuntimeException();
-		
-		return null;
+        return response.getStatusLine().getStatusCode();
 			
 	}
 

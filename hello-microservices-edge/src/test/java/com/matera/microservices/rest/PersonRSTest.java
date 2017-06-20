@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.service.PersonService;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
@@ -38,7 +39,7 @@ public class PersonRSTest {
 	private static final String RANDOM_UUID = UUID.randomUUID().toString();
 	
 	/**
-	 * Test if ({@link PersonRS#createPerson(CreatePersonRequest)} will 
+	 * Test if ({@link PersonRS#create(CreatePersonRequest)} will 
 	 * return an Observable of {@link CreatePersonResponse}
 	 * 
 	 * @throws Exception
@@ -51,7 +52,7 @@ public class PersonRSTest {
 		
 		Mockito.when(personService.create(person)).thenReturn(observable);
 		
-		Response response = personRS.createPerson(person);
+		Response response = personRS.create(person);
 		
 		CreatePersonResponse created = (CreatePersonResponse) response.getEntity(); 
 		
@@ -107,9 +108,91 @@ public class PersonRSTest {
 		assertEquals("Success", updated.getMessage());
 		
 	}
+	
+	/**
+	 * Tests if ({@link PersonRS#delete(String)} will return 200 status
+	 * when deleting a person through a valid id
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePersonOk() throws Exception {
+		
+		Observable<Integer> observable = Observable.just(Status.OK.getStatusCode());
+		
+		Mockito.doReturn(observable)
+			.when(personService)
+			.delete(Mockito.anyString());
+		
+		Response response = personRS.delete(RANDOM_UUID);
+		
+		assertEquals(Status.OK.getStatusCode(), response.getStatus());
+		
+	}
+	
+	/**
+	 * Tests if ({@link PersonRS#delete(String)} will return 404 status
+	 * when trying to delete a person through a inexistent id
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePersonThroughInexistentID() throws Exception {
+		
+		Observable<Integer> observable = Observable.just(Status.NOT_FOUND.getStatusCode());
+		
+		Mockito.doReturn(observable)		
+			.when(personService)
+			.delete(Mockito.anyString());
+		
+		Response response = personRS.delete(RANDOM_UUID);
+		
+		assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+		
+	}
+	
+	/**
+	 * Tests if ({@link PersonRS#delete(String)} will return 400 status
+	 * when trying to delete a person through a invalid id
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePersonThroughInvalidID() throws Exception {
+		
+		Observable<Integer> observable = Observable.just(Status.BAD_REQUEST.getStatusCode());
+		
+		Mockito.doReturn(observable)				
+			.when(personService)
+			.delete(Mockito.anyString());
+		
+		Response response = personRS.delete(RANDOM_UUID);
+		
+		assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+		
+	}
+	
+	/**
+	 * Tests if ({@link PersonRS#delete(String)} will return 503 status
+	 * when trying to access middle service
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePersonFailsWhenHitsMiddle() throws Exception {
+		
+		Mockito.doThrow(HystrixRuntimeException.class)
+			.when(personService)
+			.delete(Mockito.anyString());
+		
+		Response response = personRS.delete(RANDOM_UUID);
+		
+		assertEquals(Status.SERVICE_UNAVAILABLE.getStatusCode(), response.getStatus());
+		
+	}		
 
 	/**
-	 * Tests if {@link PersonRS#findPersonByUUID(String)} will 
+	 * Tests if {@link PersonRS#findByUUID(String)} will 
 	 * return an Observable of PersonResource and status 200 when 
 	 * finding for a valid uuid
 	 * 
@@ -122,7 +205,7 @@ public class PersonRSTest {
 		
 		Mockito.when(personService.findByUUID(RANDOM_UUID)).thenReturn(observable);
 		
-		Response response = personRS.findPersonByUUID(RANDOM_UUID);
+		Response response = personRS.findByUUID(RANDOM_UUID);
 		
 		PersonResource personFound = (PersonResource) response.getEntity();
 		
@@ -134,7 +217,7 @@ public class PersonRSTest {
 	}
 	
 	/**
-	 * Tests if {@link PersonRS#findPersonByUUID(String)} will
+	 * Tests if {@link PersonRS#findByUUID(String)} will
 	 * return 404 status when searching by an "invalid" or "inexistent" uuid
 	 * 
 	 * @throws Exception
@@ -147,14 +230,14 @@ public class PersonRSTest {
 		Mockito.when(personService.findByUUID(RANDOM_UUID))
 			   .thenReturn(observable);
 		
-		Response response = personRS.findPersonByUUID(RANDOM_UUID);
+		Response response = personRS.findByUUID(RANDOM_UUID);
 		
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 		
 	}
 	
 	/**
-	 * Tests if {@link PersonRS#findAllPeople(String, String, String)} will
+	 * Tests if {@link PersonRS#findAll(String, String, String)} will
 	 * return 200 status and Observable of PeopleResource when finding for "valid" params
 	 * 
 	 * @throws Exception
@@ -167,7 +250,7 @@ public class PersonRSTest {
 		Mockito.when(personService.findAll(Mockito.any(PersonQuery.class)))
 		       .thenReturn(observable);
 		
-		Response response = personRS.findAllPeople("Willian", "Azevedo", "");
+		Response response = personRS.findAll("Willian", "Azevedo", "");
 		
 		PeopleResource people = (PeopleResource) response.getEntity();
 		
@@ -179,7 +262,7 @@ public class PersonRSTest {
 	}
 	
 	/**
-	 * Tests if {@link PersonRS#findAllPeople(String, String, String)} will
+	 * Tests if {@link PersonRS#findAll(String, String, String)} will
 	 * return 404 status when finding for "invalid" and "inexistent" params
 	 * 
 	 * @throws Exception
@@ -193,7 +276,7 @@ public class PersonRSTest {
 			   .when(personService)
 			   .findAll(Mockito.any(PersonQuery.class));
 		
-		Response response = personRS.findAllPeople("Willian", "Azevedo", "");
+		Response response = personRS.findAll("Willian", "Azevedo", "");
 		
 		assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 

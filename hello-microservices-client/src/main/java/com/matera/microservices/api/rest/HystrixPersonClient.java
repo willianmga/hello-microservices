@@ -44,7 +44,7 @@ public class HystrixPersonClient implements PersonClient {
 		
 	}
 	
-	public Observable<Void> delete(UUID id) {
+	public Observable<Integer> delete(UUID id) {
 		
 		return new PersonDeleteCommand(client, id).observe();
 		

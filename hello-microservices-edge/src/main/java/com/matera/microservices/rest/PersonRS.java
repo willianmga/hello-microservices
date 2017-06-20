@@ -3,6 +3,7 @@ package com.matera.microservices.rest;
 import java.util.NoSuchElementException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -36,7 +37,7 @@ public class PersonRS {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createPerson(CreatePersonRequest person) {
+	public Response create(CreatePersonRequest person) {
 		
 		try {
 		
@@ -78,10 +79,28 @@ public class PersonRS {
 		
 	}
 	
+	@DELETE
+	@Path("/{id}")
+	public Response delete(@PathParam("id") String uuid) {
+		
+		try {
+			
+			Integer status = service.delete(uuid).toBlocking().single();
+			
+			return Response.status(status).build();
+		
+		} catch(Exception e) {
+
+			return Response.status(Status.SERVICE_UNAVAILABLE).build();
+			
+		}
+		
+	}
+	
 	@GET
 	@Path("/{personUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findPersonByUUID(@PathParam("personUUID") String uuid) {
+	public Response findByUUID(@PathParam("personUUID") String uuid) {
 		
 		try {
 		
@@ -98,7 +117,7 @@ public class PersonRS {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAllPeople(
+	public Response findAll(
 						@QueryParam("firstName") String firstName, 
 						@QueryParam("lastName") String lastName, 
 						@QueryParam("zipCode") String zipCode) {

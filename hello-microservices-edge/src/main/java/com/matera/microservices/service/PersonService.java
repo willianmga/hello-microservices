@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.google.inject.Inject;
 import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
 import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
@@ -18,7 +19,9 @@ public class PersonService {
 	
 	@Inject
 	public PersonService(PersonClient client) {
+		
 		this.client = client;
+		
 	}
 
 	public Observable<CreatePersonResponse> create(CreatePersonRequest person) {
@@ -35,7 +38,17 @@ public class PersonService {
 			return null;
 		}
 		
-	}		
+	}	
+
+	public Observable<Integer> delete(String uuid) {
+		
+		try {
+			return client.delete(UUID.fromString(uuid));
+		} catch(IllegalArgumentException e) {
+			return Observable.just(Status.BAD_REQUEST.getStatusCode());
+		}
+		
+	}	
 
 	public Observable<PersonResource> findByUUID(String uuid) {
 		

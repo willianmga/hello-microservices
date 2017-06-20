@@ -29,7 +29,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
-import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 import matera.com.hellomicroservices.core.config.HelloMicroservicesObjectMapperProvider;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
@@ -147,36 +147,40 @@ public class HystrixPersonClientTest {
 	}
 	
 	/**
-	 * Tests if {@link HystrixPersonClient#delete(UUID)} will return {@link HystrixRuntimeException}
+	 * Tests if {@link HystrixPersonClient#delete(UUID)} will return 404
 	 * when trying do delete a person through an inexistent id
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = HystrixRuntimeException.class)
+	@Test
 	public void deletePersonWithInexistentID() throws Exception {
 		
 		Mockito.doReturn(httpNotFoundResponse())
 			.when(httpClient)
 			.execute(Mockito.any(HttpDelete.class));
 		
-		hystrixClient.delete(RANDOM_UUID).toBlocking().single();
+		Integer status = hystrixClient.delete(RANDOM_UUID).toBlocking().single();
+		
+		assertEquals(new Integer(Status.NOT_FOUND.getStatusCode()), status);
 		
 	}
 	
 	/**
-	 * Tests if ({@link HystrixPersonClient#delete(UUID)} will return ({@link HystrixRuntimeException}
+	 * Tests if ({@link HystrixPersonClient#delete(UUID)} will return 400
 	 * when trying do delete a person through an invalid id
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = HystrixRuntimeException.class)
+	@Test
 	public void deletePersonWithInvalidID() throws Exception {
 
 		Mockito.doReturn(httpBadRequestResponse())
 			.when(httpClient)
 			.execute(Mockito.any(HttpDelete.class));
 	
-		hystrixClient.delete(RANDOM_UUID).toBlocking().single();		
+		Integer status = hystrixClient.delete(RANDOM_UUID).toBlocking().single();
+		
+		assertEquals(new Integer(Status.BAD_REQUEST.getStatusCode()), status);
 		
 	}
 	
