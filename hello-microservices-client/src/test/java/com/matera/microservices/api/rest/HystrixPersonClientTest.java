@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -28,6 +29,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 import matera.com.hellomicroservices.core.config.HelloMicroservicesObjectMapperProvider;
 import matera.com.hellomicroservices.core.requests.CreatePersonRequest;
@@ -40,11 +42,12 @@ import rx.Observable;
 @RunWith(MockitoJUnitRunner.class)
 public class HystrixPersonClientTest {
 
+	private final UUID RANDOM_UUID = UUID.randomUUID();
+	
 	@Mock
 	private HttpClient httpClient;
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper;
 	private HystrixPersonClient hystrixClient;
-	private UUID uuid = UUID.randomUUID();
 	
 	@Before
 	public void init() {
@@ -103,10 +106,10 @@ public class HystrixPersonClientTest {
 			
 		CreatePersonRequest person = newCreatePersonRequest();
 		
-		CreatePersonResponse response = hystrixClient.update(uuid, person).toBlocking().single();
+		CreatePersonResponse response = hystrixClient.update(RANDOM_UUID, person).toBlocking().single();
 		
 		assertEquals("Success", response.getMessage());
-		assertEquals(uuid, response.getId());
+		assertEquals(RANDOM_UUID, response.getId());
 		
 	}
 	
@@ -123,7 +126,57 @@ public class HystrixPersonClientTest {
 			.when(httpClient)
 			.execute(Mockito.any(HttpPut.class));
 		
-		hystrixClient.update(uuid, newCreatePersonRequest());
+		hystrixClient.update(RANDOM_UUID, newCreatePersonRequest());
+		
+	}
+	/**
+	 * Tests if {@link HystrixPersonClient#delete(UUID)} will return 200 status
+	 * when deleting an exiting person
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePersonOk() throws Exception {
+		
+		Mockito.doReturn(newHttpSuccessResponse())
+			.when(httpClient)
+			.execute(Mockito.any(HttpDelete.class));
+		
+		hystrixClient.delete(RANDOM_UUID).toBlocking().single();
+		
+	}
+	
+	/**
+	 * Tests if {@link HystrixPersonClient#delete(UUID)} will return {@link HystrixRuntimeException}
+	 * when trying do delete a person through an inexistent id
+	 * 
+	 * @throws Exception
+	 */
+	@Test(expected = HystrixRuntimeException.class)
+	public void deletePersonWithInexistentID() throws Exception {
+		
+		Mockito.doReturn(httpNotFoundResponse())
+			.when(httpClient)
+			.execute(Mockito.any(HttpDelete.class));
+		
+		hystrixClient.delete(RANDOM_UUID).toBlocking().single();
+		
+	}
+	
+	/**
+	 * Tests if ({@link HystrixPersonClient#delete(UUID)} will return ({@link HystrixRuntimeException}
+	 * when trying do delete a person through an invalid id
+	 * 
+	 * @throws Exception
+	 */
+	@Test(expected = HystrixRuntimeException.class)
+	public void deletePersonWithInvalidID() throws Exception {
+
+		Mockito.doReturn(httpBadRequestResponse())
+			.when(httpClient)
+			.execute(Mockito.any(HttpDelete.class));
+	
+		hystrixClient.delete(RANDOM_UUID).toBlocking().single();		
 		
 	}
 	
@@ -138,13 +191,14 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpGet.class));
 		
-		PersonResource resource = hystrixClient.searchByUUID(uuid).toBlocking().single();
+		PersonResource resource = hystrixClient.searchByUUID(RANDOM_UUID).toBlocking().single();
 		
-		assertEquals(uuid, resource.getUuid());
+		assertEquals(RANDOM_UUID, resource.getUuid());
 		assertEquals("Willian", resource.getFirstName());
 		assertEquals("87025640", resource.getAddress().getZipCode());
 		
 	}
+	
 	/**
 	 * Tests if ({@link HystrixPersonClient#searchByUUID(UUID)} will return 404 status
 	 * when finding a "invalid" person id 
@@ -156,7 +210,7 @@ public class HystrixPersonClientTest {
 			   .when(httpClient)
 			   .execute(Mockito.any(HttpGet.class));
 		
-		hystrixClient.searchByUUID(uuid).toBlocking().single();
+		hystrixClient.searchByUUID(RANDOM_UUID).toBlocking().single();
 		
 	}
 	
@@ -166,7 +220,6 @@ public class HystrixPersonClientTest {
 	 * 
 	 * @throws Exception
 	 */
-	
 	@Test
 	public void findPeopleByQueryOk() throws Exception {
 		
@@ -190,13 +243,6 @@ public class HystrixPersonClientTest {
 		
 	}
 	
-	@Test
-	public void findPeopleByQueryNotFound() throws Exception {
-		
-		
-		
-	}
-	
 	private CreatePersonRequest newCreatePersonRequest() {
 
 		return new CreatePersonRequest.Builder()
@@ -215,7 +261,7 @@ public class HystrixPersonClientTest {
 	public CreatePersonResponse newCreatePersonResponse() {
 
 		return new CreatePersonResponse.Builder()
-						.withID(uuid)
+						.withID(RANDOM_UUID)
 						.withMessage("Success")
 						.build();
 
@@ -231,7 +277,7 @@ public class HystrixPersonClientTest {
 				.build();
 		
 		return new PersonResource.Builder()
-			.withUUID(uuid)
+			.withUUID(RANDOM_UUID)
 			.withFirstName("Willian")
 			.withLastName("Azevedo")
 			.withEmail("willian-mga@hotmail.com")
@@ -286,17 +332,35 @@ public class HystrixPersonClientTest {
 		
 		return response;
 		
-	}		
+	}	
+	
+	private HttpResponse newHttpSuccessResponse() {
+		
+		HttpResponse response = newHttpSuccess();
+		response.setEntity(newBasicHttpEntity());
+		
+		return response;		
+		
+	}
 	
 	private HttpResponse newHttpSuccess() {
+		
 		return new BasicHttpResponse(new BasicStatusLine(
 										new ProtocolVersion("HTTP", 4, 0), 200, null));
+		
 	}
 	
 	private HttpResponse httpNotFoundResponse() throws Exception {
 		
 		return new BasicHttpResponse(new BasicStatusLine(
 										new ProtocolVersion("HTTP", 4, 0), 404, null));
+		
+	}
+	
+	private HttpResponse httpBadRequestResponse() {
+		
+		return new BasicHttpResponse(new BasicStatusLine(
+										new ProtocolVersion("HTTP", 4, 0), 400, null));
 		
 	}	
 	

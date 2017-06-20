@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import com.matera.hellomicroservices.queries.PersonQuery;
 import com.matera.microservices.api.PersonClient;
 import com.matera.microservices.api.command.PersonCreateCommand;
+import com.matera.microservices.api.command.PersonDeleteCommand;
 import com.matera.microservices.api.command.PersonFindAllPeopleCommand;
 import com.matera.microservices.api.command.PersonFindByIdCommand;
 import com.matera.microservices.api.command.PersonUpdateCommand;
@@ -31,28 +32,30 @@ public class HystrixPersonClient implements PersonClient {
 		this.mapper = mapper;
 	}
 
-	@Override
 	public Observable<CreatePersonResponse> create(final CreatePersonRequest request) {
 		
 		return new PersonCreateCommand(client, mapper, request).observe();
 		
 	}
 	
-	@Override
 	public Observable<CreatePersonResponse> update(final UUID id, final CreatePersonRequest request) {
 		
 		return new PersonUpdateCommand(client, mapper, id, request).observe();
 		
+	}
+	
+	public Observable<Void> delete(UUID id) {
+		
+		return new PersonDeleteCommand(client, id).observe();
+		
 	}	
 
-	@Override
 	public Observable<PersonResource> searchByUUID(final UUID id) {
 		
 		return new PersonFindByIdCommand(client, mapper, id).observe();
 
 	}
 
-	@Override
 	public Observable<PeopleResource> searchBy(final PersonQuery personQuery) {
 		
 		return new PersonFindAllPeopleCommand(client, mapper, personQuery).observe();

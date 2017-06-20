@@ -23,7 +23,6 @@ import matera.com.hellomicroservices.core.responses.CreatePersonResponse;
 public class PersonCreateCommand extends HystrixCommand<CreatePersonResponse> {
 
 	private static final HystrixCommand.Setter SETTER;
-	
 	private static final DynamicStringProperty HELLO_MIDDLE_HOST;	
 	
 	private final HttpClient clientProvider;

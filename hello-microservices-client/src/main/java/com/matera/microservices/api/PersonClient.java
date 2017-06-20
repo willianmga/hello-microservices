@@ -36,6 +36,14 @@ public interface PersonClient {
 	public Observable<CreatePersonResponse> update(final UUID id, final CreatePersonRequest request);
 	
 	/**
+	 * Deletes a person
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Observable<Void> delete(final UUID id);
+	
+	/**
 	 * Finds a person by it's id on middle service 
 	 * 
 	 * @param the person uuid
@@ -53,5 +61,4 @@ public interface PersonClient {
 	 */
 	public Observable<PeopleResource> searchBy(final PersonQuery personQuery);
 	
-
 }

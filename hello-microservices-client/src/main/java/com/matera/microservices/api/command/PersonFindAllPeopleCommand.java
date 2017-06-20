@@ -70,8 +70,6 @@ public class PersonFindAllPeopleCommand extends HystrixCommand<PeopleResource> {
 		HttpGet request = new HttpGet(uri.build());
 		request.setHeader("Accept", "application/json");
 		
-		System.out.println("Http get para uri: " + uri.build().toString());
-		
 		try {
 		
 			HttpResponse response = client.execute(request);
