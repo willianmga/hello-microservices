@@ -2,17 +2,30 @@ package com.matera.hellomicroservices.entities;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.UUID;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import org.apache.commons.lang.StringUtils;
 
+@Entity
 public class Address {
 	
-	private final String city;
-	private final String state;
-	private final String country;
-	private final String zipCode;
+	@Id
+	private UUID id;
+	private String city;
+	private String state;
+	private String country;
+	private String zipCode;
+	
+	private Address() {
+		super();
+	}
 	
 	private Address(Builder builder) {
 		
+		this.id = UUID.randomUUID();
 		this.city = builder.city;
 		this.state = builder.state;
 		this.country = builder.country;

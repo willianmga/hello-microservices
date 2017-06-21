@@ -4,16 +4,30 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.UUID;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
 import org.apache.commons.lang.StringUtils;
 
+@Entity
 public class Person {
 	
-	private final UUID id;
-	private final String firstName;
-	private final String lastName;
-	private final String email;
-	private final String nickName;
-	private final Address address;
+	@Id
+	private UUID id;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String nickName;
+	
+	@OneToOne
+	@JoinColumn
+	private Address address;
+	
+	private Person() {
+		super();
+	}
 	
 	private Person(Builder builder) {
 		

@@ -1,0 +1,27 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+        version="2.0">
+        
+    <persistence-unit name="hibernateMySQLPU" transaction-type="RESOURCE_LOCAL">
+        
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		
+		<class>com.matera.hellomicroservices.entities.Person</class>
+		<class>com.matera.hellomicroservices.entities.Address</class>
+		
+		<properties>
+		   <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" /> 
+		   <property name="javax.persistence.jdbc.url" value="jdbc:mysql://hellomicroservicesbd:3306/hellomicroservices" />
+		   <property name="javax.persistence.jdbc.user" value="matera" />
+		   <property name="javax.persistence.jdbc.password" value="m@t3R@5y5t3ms" />
+		
+		   <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+		   <property name="hibernate.show_sql" value="true" />
+		   <property name="hibernate.format_sql" value="true" />
+		   <property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>        
+        
+    </persistence-unit>
+    
+</persistence>

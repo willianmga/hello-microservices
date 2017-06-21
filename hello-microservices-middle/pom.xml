@@ -11,6 +11,8 @@
 
 	<properties>
 		<tomcat.port>9080</tomcat.port>
+		<hibernate.version>5.2.9.Final</hibernate.version>
+		<mySQL.driver.veriosn>6.0.6</mySQL.driver.veriosn>
 	</properties>
 
 	<dependencies>
@@ -86,10 +88,24 @@
 			<artifactId>hystrix-core</artifactId>
 			<version>1.4.25</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-core</artifactId>
+		    <version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-entitymanager</artifactId>
+		    <version>${hibernate.version}</version>
+		</dependency>
+   		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>${mySQL.driver.veriosn}</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
-	
 		<profile>
 			<id>integration-test</id>
 			<activation>
@@ -100,7 +116,6 @@
 					<plugin>
 						<groupId>org.apache.tomcat.maven</groupId>
 						<artifactId>tomcat7-maven-plugin</artifactId>
-						<version>2.2</version>
 						<executions>
 							<execution>
 								<id>tomcat-run</id>
@@ -117,6 +132,7 @@
 										<application.home>${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}</application.home>
 										<application.version>${project.version}</application.version>
 										<http.port>${tomcat.port}</http.port>
+										<db.strategy>in_memory</db.strategy>
 									</systemProperties>
 									<useTestClasspath>true</useTestClasspath>
 								</configuration>
@@ -129,8 +145,7 @@
 								<phase>post-integration-test</phase>
 							</execution>
 						</executions>
-					</plugin>
-					
+					</plugin>			
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -146,6 +161,7 @@
 					</plugin>
 				</plugins>
 			</build>
+		
 		</profile>
 		
 	</profiles>	

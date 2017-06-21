@@ -1,7 +1,21 @@
 version: "2"
 services:
+  hellomicroservicesbd:
+    image: mysql/mysql-server:5.7
+    ports:
+       - "3306:3306"
+    environment: 
+       - MYSQL_ROOT_PASSWORD=db1n5t2nc3
+       - MYSQL_DATABASE=hellomicroservices
+       - MYSQL_USER=matera
+       - MYSQL_PASSWORD=m@t3R@5y5t3ms
+
   hellomicroservicesmiddle: 
     image: willianmga/hellomicroservices:hellomicroservicesmiddle
+    depends_on: 
+      - hellomicroservicesbd
+    links: 
+      - hellomicroservicesbd
 
   hellomicroservicesedge: 
     image: willianmga/hellomicroservices:hellomicroservicesedge

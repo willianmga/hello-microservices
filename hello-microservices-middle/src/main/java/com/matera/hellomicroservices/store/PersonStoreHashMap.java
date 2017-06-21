@@ -10,7 +10,7 @@ import com.matera.hellomicroservices.entities.Person;
 public class PersonStoreHashMap implements PersonStore {
 	
 	private static HashMap<UUID, Person> fakeData = new HashMap<UUID, Person>();
-
+	
 	public void insert(Person person) {
 		
 		fakeData.put(person.getId(), person);
