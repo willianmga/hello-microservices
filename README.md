@@ -1,4 +1,4 @@
-## Hello-Microservices
+# Hello-Microservices
 
 Hello Microservices is a hello world project created in order to practice the principles of microservices architeture.
 It allows you to save, find, update and delete people. That's all it does! ;)
@@ -24,7 +24,7 @@ It has been develop using the most recent technologies such:
 	- GuiHub as SCM and issues management software
 	- Postman for API testing
 
-# Running With Docker
+## Running With Docker
 
 You can run hellomicroservices by installing docker on your computer and running docker-compose.yml file with docker compose.
 	
@@ -53,8 +53,11 @@ Then get the address of property IPAddress returned by the above command
 NOTE: In order to run the following run requests you will have to replace the [EDGE_COTAINER_IP] variable by the ip
 given in IPAdress property returned above.
 
-### Requests Examples
-#### Create Person
+## Requests Examples
+
+### Create Person
+
+This request allows you to create a person
 
 Request
 ```sh
@@ -79,7 +82,11 @@ Response
 }
 ```
 
-#### Update Person
+NOTE: save the personID property value so that you can UPDATE, FIND and even DELETE person through his/her id. 
+
+Replace {PERSON_ID} variable in the nexts requests examples by personID property value returned in this request.
+
+### Update Person by ID
 
 Request
 ```sh
@@ -104,7 +111,7 @@ Response
 }
 ```
 
-#### Delete Person
+### Delete Person by ID
 
 Request
 ```sh
@@ -112,14 +119,12 @@ $ curl -X DELETE -H "Cache-Control: no-cache" "http://[EDGE_COTAINER_IP]:8090/he
 ```
 
 
-#### Query Person by ID
+### Query Person by ID
 
 Request:
 ```sh
 curl -X GET -H "Cache-Control: no-cache" "http://[EDGE_COTAINER_IP]:8090/hellomicroservicesedge/persons/{PERSON_ID}"
 ```
-
-where {PERSON_ID} is the uuid of person returned in personID property of the below POST response
 
 Response:
 ```javascript
@@ -138,9 +143,10 @@ Response:
 }
 ```
 
-#### Query Person Query Params
+### Query Person by Query Params
 
-This endpoint provides the possibility to query person first name, last name or even zip code, like this.
+This endpoint provides the possibility to query person first name, last name or even zip code by givin valus to the params firstName, lastName and zipCode.
+NOTE: These parameters are optional. If you wish to find all people just dont put them in your request.
 
 Request:
 ```sh
