@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -21,8 +22,8 @@ public class Person {
 	private String email;
 	private String nickName;
 	
-	@OneToOne
 	@JoinColumn
+	@OneToOne(cascade = CascadeType.PERSIST)
 	private Address address;
 	
 	private Person() {

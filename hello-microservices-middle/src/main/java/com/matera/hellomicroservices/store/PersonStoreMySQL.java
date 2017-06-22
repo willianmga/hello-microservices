@@ -24,19 +24,27 @@ public final class PersonStoreMySQL implements PersonStore {
 
 		try {
 			
-//			if (!entityManager.getTransaction().isActive()) {
-//				entityManager.getTransaction().begin();
-//			}
+			System.out.println("vou começar a persistir a pessoa");			
+			
+			if (!entityManager.getTransaction().isActive()) {
+				entityManager.getTransaction().begin();
+			}
 			
 			entityManager.persist(person);
-//			entityManager.flush();
-//			entityManager.getTransaction().commit();
+			entityManager.flush();
+			entityManager.getTransaction().commit();
+			
+			System.out.println("terminei de persistir a pessoa");
 		
 		} catch(Exception e) {
 			
-//			if (entityManager.getTransaction().isActive()) {
-//				entityManager.getTransaction().rollback();
-//			}
+			System.out.println("Deu ruim...");
+			
+			e.printStackTrace();
+				
+			if (entityManager.getTransaction().isActive()) {
+				entityManager.getTransaction().rollback();
+			}
 			
 		}
 		
