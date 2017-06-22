@@ -29,31 +29,38 @@ It has been develop using the most recent technologies such:
 You can run hellomicroservices by installing docker on your computer and running docker-compose.yml file with docker compose.
 	
 ```sh
-$ docker-compose up
+$ docker-compose -f ./docker-compose.yml up -d
 ```
 
-After running the above command you will have to discover what is the IP Address of midlle container. You can do it by running the following command.
+## Discovering the IP Address of hellomicroservicesmiddle container
 
+After running the command above docker will start mysql, edge and middle services container in your machine. The request examples given below will 
+all be directed to hellomicroservicesedge container. In order to run the requests you will have to discover the IP Address of this container.
+You can do it by running the following the below instructions:
 
+### 1st.
 ```sh
 $ docker ps
 ```
 
-Then get the container id of hellomicroservicesedge container. 
+Then get the container id of hellomicroservicesedge container as described in CONTAINER ID column of the returned table. 
 
-After you got the container id , then run the following command replacing [EDGE_COTAINER_ID] by
-the id returned by [COTAINER ID] column.
+### 2nd.
+Run the following command replacing [EDGE_COTAINER_ID] by the id the hellomicroservicesedge container id.
 
 ```sh
 $ docker inspect [EDGE_COTAINER_ID] | grep IP
 ```
 
-Then get the address of property IPAddress returned by the above command
+Then get the IP Address existent in IPAddress property returned by the above command.
 
-NOTE: In order to run the following run requests you will have to replace the [EDGE_COTAINER_IP] variable by the ip
-given in IPAdress property returned above.
 
 ## Requests Examples
+####
+NOTES: 
+	1st. In order to run the following run requests you will have to replace the [EDGE_COTAINER_IP] variable by the IP Address of hellomicroservicesmiddle container.
+	2nd. Save the personID property value retuned in create person response so that you can UPDATE, FIND and even DELETE person.
+Replace {PERSON_ID} variable in the next requests examples by the value of this property.
 
 ### Create Person
 
@@ -81,10 +88,6 @@ Response
   "message": "Success"
 }
 ```
-
-NOTE: save the personID property value so that you can UPDATE, FIND and even DELETE person through his/her id. 
-
-Replace {PERSON_ID} variable in the nexts requests examples by personID property value returned in this request.
 
 ### Update Person by ID
 
@@ -173,3 +176,14 @@ Response:
       }
 }
 ```
+
+## Practice it!
+
+I've learned this principles by following a example project. This architeture is a very important one. 
+So, I hardly recommend you to do the same so you can learn by yourself.
+
+## Want to contribute?
+
+Contributions are always welcome. If you wish to contribute to this example project just send a pull request or create an issue so that we can work together.
+
+### THAT'S ALL FOLKS!
