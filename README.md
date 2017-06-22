@@ -59,12 +59,10 @@ Then get the IP Address existent in IPAddress property returned by the above com
 ####
 NOTES: 
 	1st. In order to run the following run requests you will have to replace the [EDGE_COTAINER_IP] variable by the IP Address of hellomicroservicesmiddle container.
-	2nd. Save the personID property value retuned in create person response so that you can UPDATE, FIND and even DELETE person.
+	2nd. Save the personID property value returned in create person response so that you can UPDATE, FIND and even DELETE person.
 Replace {PERSON_ID} variable in the next requests examples by the value of this property.
 
 ### Create Person
-
-This request allows you to create a person
 
 Request
 ```sh
@@ -148,7 +146,7 @@ Response:
 
 ### Query Person by Query Params
 
-This endpoint provides the possibility to query person first name, last name or even zip code by givin valus to the params firstName, lastName and zipCode.
+This endpoint provides the possibility to query person first name, last name or even zip code by giving valus to the params firstName, lastName and zipCode.
 NOTE: These parameters are optional. If you wish to find all people just dont put them in your request.
 
 Request:
@@ -178,7 +176,7 @@ Response:
 ## Practice it!
 
 I've learned these principles by following an example project. This architeture is a very important one. 
-So, I hardly recommend you to do the same so you can learn by yourself.
+So, I recommend you to do the same so you can learn by yourself.
 
 ## Want to contribute?
 
