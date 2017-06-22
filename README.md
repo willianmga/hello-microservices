@@ -32,7 +32,7 @@ You can run hellomicroservices by installing docker on your computer and running
 $ docker-compose up
 ```
 
-After running the above command you will have to discover what is the ip of midlle service. You can do it like this:
+After running the above command you will have to discover what is the IP Address of midlle container. You can do it by running the following command.
 
 
 ```sh
