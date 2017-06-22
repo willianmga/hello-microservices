@@ -1,7 +1,7 @@
 # Hello-Microservices
 
 Hello Microservices is a hello world project created in order to practice the principles of microservices architeture.
-It allows you to save, find, update and delete people. That's all it does! ;)
+It allows you to save, find, update and delete person. That's all it does! ;)
 
 It has been develop using the most recent technologies such:
 	
@@ -38,14 +38,14 @@ After running the command above docker will start mysql, edge and middle service
 all be directed to hellomicroservicesedge container. In order to run the requests you will have to discover the IP Address of this container.
 You can do it by running the following the below instructions:
 
-### 1st.
+#### 1st.
 ```sh
 $ docker ps
 ```
 
 Then get the container id of hellomicroservicesedge container as described in CONTAINER ID column of the returned table. 
 
-### 2nd.
+#### 2nd.
 Run the following command replacing [EDGE_COTAINER_ID] by the id the hellomicroservicesedge container id.
 
 ```sh
@@ -156,8 +156,6 @@ Request:
 curl -X GET -H "Cache-Control: no-cache" "http://[EDGE_COTAINER_IP]:8090/hellomicroservicesedge/persons?firstName={PERSON_FIRST_NAME}&lastName={PERSON_LAST_NAME}&zipCode={PERSON_ZIP_CODE}"
 ```
 
-where {PERSON_ID} is the uuid of person returned in personID property of the below POST response
-
 Response:
 ```javascript
 {
@@ -179,7 +177,7 @@ Response:
 
 ## Practice it!
 
-I've learned this principles by following a example project. This architeture is a very important one. 
+I've learned these principles by following an example project. This architeture is a very important one. 
 So, I hardly recommend you to do the same so you can learn by yourself.
 
 ## Want to contribute?
