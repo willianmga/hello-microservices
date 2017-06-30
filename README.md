@@ -9,6 +9,10 @@ It has been develop using the most recent technologies such:
 		- Google Guice
 		- Jersey
 		- Netflix Hystrix
+		- Netflix Eureka
+		- Netflix Governator
+		- Netflix Karyon
+		- Netflix Archaius
 		- ReactiveX
 		- Hibernate
 		- Jackson Mapper
