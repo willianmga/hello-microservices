@@ -1,22 +1,20 @@
 package com.matera.microservices.config;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.inject.Binder;
+import com.netflix.karyon.server.ServerBootstrap;
 
 import matera.com.hellomicroservices.core.config.HelloMicroservicesHttpClientModule;
 import matera.com.hellomicroservices.core.config.HelloMicroservicesJacksonModule;
 
-public class Bootstrap extends GuiceServletContextListener {
+public class Bootstrap extends ServerBootstrap {
 
 	@Override
-	protected Injector getInjector() {
+	protected void configureBinder(Binder binder) {
 		
-		return Guice.createInjector(new ServiceModule(), 
-									new RestModule(),
-									new HelloMicroservicesHttpClientModule(),
-									new HelloMicroservicesJacksonModule(), 
-									new HelloMicroservicesClientModule());
+		binder.install(new ServiceModule());
+		binder.install(new HelloMicroservicesHttpClientModule());
+		binder.install(new HelloMicroservicesJacksonModule());
+		binder.install(new HelloMicroservicesClientModule());
 		
 	}
 
