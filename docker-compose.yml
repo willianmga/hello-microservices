@@ -1,5 +1,13 @@
 version: "2"
 services:
+  eureka:
+    image: netflixoss/eureka:1.3.1
+    ports:
+       - "8080:8080"
+    environment:
+       - eureka.environment=local
+       - eureka.datacenter=ndc
+
   hellomicroservicesbd:
     image: mysql/mysql-server:5.7
     ports:
@@ -14,13 +22,16 @@ services:
     image: willianmga/hellomicroservices:hellomicroservicesmiddle
     depends_on: 
       - hellomicroservicesbd
+      - eureka
     links: 
       - hellomicroservicesbd
+      - eureka
 
   hellomicroservicesedge: 
     image: willianmga/hellomicroservices:hellomicroservicesedge
     depends_on: 
       - hellomicroservicesmiddle 
+      - eureka
     links: 
       - hellomicroservicesmiddle
-      
+      - eureka
