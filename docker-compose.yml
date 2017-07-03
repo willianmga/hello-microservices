@@ -8,6 +8,18 @@ services:
        - eureka.environment=local
        - eureka.datacenter=ndc
 
+  zuul:
+    image: netflixoss/zuul:1.0.28
+    ports:
+      - "9090:8080"
+    depends_on:
+      - eureka
+    links:
+      - eureka
+    environment:
+      - eureka.serviceUrl.default=http://eureka:8080/eureka/v2/
+      - origin.zuul.client.DeploymentContextBasedVipAddresses=hellomicroservicesedge.matera.com
+
   hellomicroservicesbd:
     image: mysql/mysql-server:5.7
     ports:
